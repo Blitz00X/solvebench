@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SolveBenchConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "mode": {
+      "enum": [
+        "pair",
+        "explore",
+        "review",
+        "trace",
+        "learning",
+        "safe"
+      ]
+    },
+    "driver": {
+      "enum": [
+        "human",
+        "agent",
+        "review_locked"
+      ]
+    },
+    "ui": {
+      "type": "object",
+      "properties": {
+        "navigatorWidth": {
+          "type": "integer",
+          "minimum": 15,
+          "maximum": 45
+        },
+        "showStatusBar": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "intervention": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "enum": [
+            "silent",
+            "sidebar",
+            "nudge"
+          ]
+        },
+        "highImpact": {
+          "enum": [
+            "sidebar",
+            "nudge",
+            "attention"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "transactions": {
+      "type": "object",
+      "properties": {
+        "maxFiles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "maxChangedLines": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "additionalProperties": false
+    },
+    "safety": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "enum": [
+            "standard",
+            "safe"
+          ]
+        },
+        "denyDestructiveShell": {
+          "type": "boolean"
+        },
+        "gitPush": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 1000
+        },
+        "excludeGlobs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "provider": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "mode",
+    "driver",
+    "transactions",
+    "safety",
+    "context",
+    "provider"
+  ]
+}

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Canonical user-local launcher. The developer launcher remains bin/pairs.
+set -euo pipefail
+project_dir=$(cd -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")/.." && pwd)
+args=("$@")
+has_repo=false
+for arg in "$@"; do
+  case "$arg" in --repo|--repo=*) has_repo=true ;; esac
+done
+if [[ "$has_repo" == false ]]; then
+  # Installed releases live at <data>/releases/<unique-release>.
+  if [[ "$(basename -- "$(dirname -- "$project_dir")")" == releases ]]; then
+    workspace="$(dirname -- "$(dirname -- "$project_dir")")/workspace"
+  else
+    data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
+    default_workspace="$data_home/solvebench/workspace"
+    if [[ ! -d "$default_workspace" && -d "$data_home/pairharness/workspace" ]]; then
+      default_workspace="$data_home/pairharness/workspace"
+    fi
+    workspace="${SOLVEBENCH_WORKSPACE:-${PAIRHARNESS_WORKSPACE:-$default_workspace}}"
+  fi
+  args+=(--repo "$workspace")
+fi
+exec bash "$project_dir/bin/pairs" "${args[@]}"

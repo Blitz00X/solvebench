@@ -1,0 +1,37 @@
+{
+  "name": "solvebench",
+  "version": "0.1.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "test:acceptance": "bun test apps/tui/src/__tests__/exercise-keys.test.tsx apps/tui/src/__tests__/exercise-ui.test.tsx apps/tui/test/exercise-session.test.ts",
+    "dev": "bun apps/tui/src/main.tsx",
+    "verify:persistence": "bun test packages/storage",
+    "check:launcher": "bash scripts/check-launcher.sh",
+    "verify:catalog": "bun scripts/verify-catalog.ts",
+    "verify:runner": "bun test packages/exercise/test/runners.test.ts",
+    "verify:workbench": "bun scripts/verify-workbench.ts"
+  },
+  "dependencies": {
+    "@opentui/core": "0.5.12",
+    "@opentui/solid": "0.5.12",
+    "solid-js": "1.9.12",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@tsconfig/bun": "1.0.11",
+    "@types/bun": "1.4.2",
+    "typescript": "5.9.2"
+  },
+  "bin": {
+    "solvebench": "./bin/solvebench",
+    "pairs": "./bin/pairs"
+  }
+}

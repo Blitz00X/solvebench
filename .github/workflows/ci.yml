@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Install test tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pytest python3-pyte bats
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Test
+        run: bun test
+      - name: Test installer
+        run: bash scripts/test-installer.sh
+      - name: Installed sample terminal smoke
+        run: python3 scripts/pty-installed-sample.py

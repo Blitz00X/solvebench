@@ -1,0 +1,69 @@
+name: Bug report
+description: Report an installation or exercise-workflow problem with a small reproduction.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove keys, cookies, private code and personal paths from attachments.
+        Do not upload your workspace database, .env or connection files.
+        For a vulnerability, follow SECURITY.md instead of posting details here.
+  - type: input
+    id: version
+    attributes:
+      label: SolveBench version
+      description: Output of solvebench --version, or the source commit if running development code.
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Operating system and architecture
+      placeholder: Ubuntu 24.04, x86_64
+    validations:
+      required: true
+  - type: input
+    id: terminal
+    attributes:
+      label: Terminal and size
+      description: Terminal name/version, columns × rows, and tmux/SSH if applicable.
+    validations:
+      required: true
+  - type: input
+    id: runtimes
+    attributes:
+      label: Runtime and language
+      description: Bun version, selected language, and relevant test-tool version.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where did it fail?
+      options:
+        - Install or update
+        - Sample or Local import
+        - Editing or saving
+        - Tests or test output
+        - Keyboard, mouse or layout
+        - Optional AI connection
+        - Exercism or LeetCode
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include the exact command and a minimal nonprivate exercise if needed.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Sanitized output or screenshot
+      description: Check test output and terminal captures for secrets before attaching.

@@ -1,0 +1,35 @@
+{
+  "$schema": "./schemas/solvebench.config.schema.json",
+  "mode": "pair",
+  "driver": "human",
+  "ui": {
+    "navigatorWidth": 28,
+    "showStatusBar": true
+  },
+  "intervention": {
+    "default": "sidebar",
+    "highImpact": "nudge"
+  },
+  "transactions": {
+    "maxFiles": 2,
+    "maxChangedLines": 60
+  },
+  "safety": {
+    "profile": "standard",
+    "denyDestructiveShell": true,
+    "gitPush": false
+  },
+  "context": {
+    "maxTokens": 24000,
+    "excludeGlobs": [
+      "**/.env*",
+      "**/*.pem",
+      "**/*secret*",
+      "**/node_modules/**",
+      "**/.git/**"
+    ]
+  },
+  "provider": {
+    "kind": "mock"
+  }
+}

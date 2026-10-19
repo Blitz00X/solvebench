@@ -1,0 +1,30 @@
+node_modules/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+
+.env
+.env.*
+!.env.example
+
+.DS_Store
+coverage/
+.tmp/
+
+# goal-loop working memory (kept in repo, deliberately not in git)
+.goal/
+
+# agent scratch
+.scratch/
+
+# local provider config: may name an env var; never commit it
+solvebench.config.json
+.solvebench/
+# Compatibility with workspaces created before the rename.
+pairharness.config.json
+.pairharness/
+
+# exercise workspace and the isolated exercism CLI config (holds the token)
+exercises/
+.exercism-cli/

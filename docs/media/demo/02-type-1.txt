@@ -1,0 +1,40 @@
+
+ SOLVEBENCH  Local   Language: python ▾   Import · Ctrl+O
+
+ ┌─EXERCISES: python──────┐                                                                          ┌─AI · CHAT──────────────────────────┐
+ │/ Search tasks…         │  Problem   Code   Test results   Full screen · f                         │ Full screen · f                    │
+ │ ○ Add Two Numbers      │                                                                          │Context ready · solvebench-sample-su│
+ │ easy                   │  solution.py                                                             │OFFLINE · scripted hint demo        │
+ │                        │                                                                          │                                    │
+ │                        │ ┌─EDIT: solution.py *──────────────────────────────────────────────────┐ │                                    │
+ │                        │ │ 1 def add(a, b):                                                     │ │                                    │
+ │                        │ │ 2                                                                    │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │1 tasks · Enter: open   │ │                                                                      │ │Help me…                            │
+ └────────────────────────┘ └──────────────────────────────────────────────────────────────────────┘ └────────────────────────────────────┘
+
+  Test · F5   Submit · F6   Next task · F7   Ask AI · Ctrl+L
+
+ focus:editor · Tab indent · Esc content · Ctrl+L chat · Tab panes · ? help · python/solvebench-sample-sum-two · unsaved changes

@@ -1,0 +1,20 @@
+ffconcat version 1.0
+file '01-problem.png'
+duration 5
+file '02-type-1.png'
+duration 1.5
+file '02-type-2.png'
+duration 1.5
+file '02-type-3.png'
+duration 1.5
+file '03-failing-test.png'
+duration 6
+file '04-ask.png'
+duration 3
+file '05-hint.png'
+duration 8
+file '06-fix.png'
+duration 4
+file '07-passing-test.png'
+duration 6
+file '07-passing-test.png'

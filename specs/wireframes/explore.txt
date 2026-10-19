@@ -1,0 +1,20 @@
+SOLVEBENCH — EXPLORE
+repo > backend > auth > session lifecycle
+┌────────────────────────────────────────────────────────┬──────────────────────┐
+│ READ src/auth/provider.ts                              │ MISSION              │
+│                                                        │ Add OAuth provider   │
+│ interface Provider {                                   │                      │
+│   exchangeCode(...)                                    │ READING PATH 1/6     │
+│   normalizeProfile(...)                                │ → Provider interface │
+│ }                                                      │ ○ Google impl        │
+│                                                        │ ○ Registry           │
+│                                                        │ ○ Callback           │
+│                                                        │ ○ Persistence        │
+│                                                        │ ○ Tests              │
+│                                                        │                      │
+│                                                        │ WHY HERE             │
+│                                                        │ All providers        │
+│                                                        │ implement contract   │
+├────────────────────────────────────────────────────────┴──────────────────────┤
+│ > /next                                                                          │
+└────────────────────────────────────────────────────────────────────────────────┘

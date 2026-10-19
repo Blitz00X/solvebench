@@ -1,0 +1,21 @@
+name: Workflow feedback
+description: Explain a concrete point of friction in the alpha.
+title: "[Feedback]: "
+body:
+  - type: textarea
+    id: workflow
+    attributes:
+      label: What were you trying to do?
+      description: Describe your task and the step where SolveBench got in the way.
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: What would help?
+      description: A small example is more useful than a broad feature list.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: Do not include private code, API keys or platform cookies.

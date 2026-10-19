@@ -1,0 +1,10 @@
+{
+  "title": "Add Two Numbers",
+  "slug": "solvebench-sample-sum-two",
+  "language": "python",
+  "difficulty": "easy",
+  "statement": "question.md",
+  "solutionFiles": ["solution.py"],
+  "testFiles": ["test_solution.py"],
+  "testCommand": ["python3", "test_solution.py"]
+}

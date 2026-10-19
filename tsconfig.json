@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/bun/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "@opentui/solid",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": false,
+    "types": [
+      "bun"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@solvebench/agent-runtime": [
+        "./packages/agent-runtime/src/index.ts"
+      ],
+      "@solvebench/agent-runtime/*": [
+        "./packages/agent-runtime/src/*"
+      ],
+      "@solvebench/exercise": [
+        "./packages/exercise/src/index.ts"
+      ],
+      "@solvebench/exercise/*": [
+        "./packages/exercise/src/*"
+      ],
+      "@solvebench/shared": [
+        "./packages/shared/src/index.ts"
+      ],
+      "@solvebench/shared/*": [
+        "./packages/shared/src/*"
+      ],
+      "@solvebench/storage": [
+        "./packages/storage/src/index.ts"
+      ],
+      "@solvebench/storage/*": [
+        "./packages/storage/src/*"
+      ]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*.ts",
+    "packages/*/src/**/*.tsx",
+    "packages/*/test/**/*.ts",
+    "apps/*/src/**/*.ts",
+    "apps/*/src/**/*.tsx",
+    "apps/*/test/**/*.ts",
+    "apps/*/test/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".goal"
+  ]
+}

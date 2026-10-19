@@ -1,0 +1,40 @@
+
+ SOLVEBENCH  Local   Language: python ▾   Import · Ctrl+O
+
+ ┌─EXERCISES: python──────┐                                                                          ┌─AI · CHAT──────────────────────────┐
+ │/ Search tasks…         │  Problem   Code   Test results   Full screen · f                         │ Full screen · f                    │
+ │ ○ Add Two Numbers      │                                                                          │Context ready · solvebench-sample-su│
+ │ easy                   │ ┌─PROBLEM: Add Two Numbers─────────────────────────────────────────────┐ │OFFLINE · scripted hint demo        │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │ Add Two Numbers                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │ Implement add(a, b) so it returns the sum of two integers.           │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │ Examples                                                             │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │ ┌──┬─┬──────┐                                                        │ │                                    │
+ │                        │ │ │a │b│Result│                                                        │ │                                    │
+ │                        │ │ ├──┼─┼──────┤                                                        │ │                                    │
+ │                        │ │ │1 │2│3     │                                                        │ │                                    │
+ │                        │ │ ├──┼─┼──────┤                                                        │ │                                    │
+ │                        │ │ │-2│5│3     │                                                        │ │                                    │
+ │                        │ │ ├──┼─┼──────┤                                                        │ │                                    │
+ │                        │ │ │0 │0│0     │                                                        │ │                                    │
+ │                        │ │ └──┴─┴──────┘                                                        │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │ Use Test / F5 to run the examples. Ask the assistant for a hint if   │ │                                    │
+ │                        │ │ needed.                                                              │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │                        │ │                                                                      │ │                                    │
+ │1 tasks · Enter: open   │ │                                                                      │ │Help me…                            │
+ └────────────────────────┘ └──────────────────────────────────────────────────────────────────────┘ └────────────────────────────────────┘
+
+  Test · F5   Submit · F6   Next task · F7   Ask AI · Ctrl+L
+
+ focus:content · ←→ tabs · ↑↓ scroll/files · f full screen · Tab panes · ? help · python/solvebench-sample-sum-two · saved

@@ -1,0 +1,8 @@
+{
+  "renderer": "@opentui/solid testRender (actual App)",
+  "provider": "Scripted offline provider; zero network/model requests",
+  "failed": true,
+  "passed": 3,
+  "scriptedHintCalls": 1,
+  "totalDuration": 36.5
+}

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# SolveBench launcher.
+#
+# Runs the TUI from anywhere: the current directory is analyzed as the target
+# repository while the harness itself runs from its own project directory, so
+# Bun resolves tsconfig.json and bunfig.toml correctly.
+#
+# Usage:
+#   pairs                    # workspace: the current directory
+#   pairs --repo ~/other     # workspace: a specific directory
+set -euo pipefail
+
+project_dir="$(cd -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")/.." && pwd)"
+invoked_from="$PWD"
+
+args=("$@")
+has_repo=false
+for arg in "$@"; do
+  case "$arg" in
+    --repo|--repo=*) has_repo=true ;;
+  esac
+done
+if [[ "$has_repo" == false ]]; then
+  args+=(--repo "$invoked_from")
+fi
+
+# The key, if set, is exported into the child process only; it is never written
+# anywhere by this script.
+cd "$project_dir"
+bun_binary="${WORKBENCH_BUN:-$(command -v bun || true)}"
+if [[ -z "$bun_binary" && -x "$HOME/.bun/bin/bun" ]]; then
+  bun_binary="$HOME/.bun/bin/bun"
+fi
+if [[ -z "$bun_binary" ]]; then
+  printf '%s\n' 'Bun is required to launch the workbench (https://bun.sh).' >&2
+  exit 1
+fi
+exec "$bun_binary" "apps/tui/src/main.tsx" "${args[@]}"

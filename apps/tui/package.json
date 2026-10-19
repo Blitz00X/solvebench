@@ -1,0 +1,15 @@
+{
+  "name": "@solvebench/tui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@opentui/core": "0.5.12",
+    "@opentui/solid": "0.5.12",
+    "@solvebench/agent-runtime": "workspace:*",
+    "@solvebench/exercise": "workspace:*",
+    "@solvebench/shared": "workspace:*",
+    "@solvebench/storage": "workspace:*",
+    "solid-js": "1.9.12"
+  }
+}
