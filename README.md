@@ -87,6 +87,7 @@ Left: searchable exercises. Center: **Problem / Code / Test results**. Right:
 the assistant and its input. Markdown statements and replies have headings,
 emphasis, code highlighting and tables. Both center and assistant panes offer
 fullscreen reading. Small terminals have separate work and AI views.
+Opening a task shows its Problem first; Ctrl+E opens the solution editor.
 
 | Key | Action |
 | --- | --- |

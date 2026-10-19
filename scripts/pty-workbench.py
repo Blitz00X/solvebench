@@ -72,13 +72,10 @@ try:
     os.write(fd, b"\r")
     pump(8)
     frame = "\n".join(screen.display)
-    assert "focus:editor" in frame, frame
-    assert "EDIT" in frame, frame
+    assert "focus:content" in frame, frame
+    assert "PROBLEM:" in frame, frame
     assert "hello_world" in frame or "hello-world" in frame, frame
     # Read the real README with styled headings, then maximize its pane.
-    os.write(fd, b"\x1b")  # editor → content
-    pump(.3)
-    os.write(fd, b"\x1b[D")  # Code → Problem
     pump(2)
     frame = "\n".join(screen.display)
     heading_rows = [y for y, row in enumerate(screen.display) if "Hello World" in row and "PROBLEM:" not in row and "✓" not in row and "○" not in row and "→" not in row]

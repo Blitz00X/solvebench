@@ -234,7 +234,7 @@ export function Workbench(props: WorkbenchProps) {
     if (!slug || busy()) return
     setNotice("")
     await perform(() => props.exercise.open(slug))
-    if (session().openedSlug === slug) { setBuffer(session().buffers[file() ?? ""] ?? ""); setTab("code"); setFocus("editor") }
+    if (session().openedSlug === slug) { setBuffer(session().buffers[file() ?? ""] ?? ""); setTab("problem"); setFocus("content") }
   }
   const run = async () => {
     if (busy()) return

@@ -145,7 +145,8 @@ test("Ctrl+O import supports pasted paths and exposes errors without losing the 
     expect(ui.captureCharFrame()).not.toContain("Connect")
     ui.mockInput.pressEnter()
     await ui.waitFor(() => h.app.exercise.getState().openedSlug === "sum-two"); await ui.flush()
-    expect(ui.captureCharFrame()).toContain("focus:editor")
+    expect(ui.captureCharFrame()).toContain("focus:content")
+    expect(ui.captureCharFrame()).toContain("PROBLEM:")
     const count = h.app.exercise.getState().exercises.length
     ui.mockInput.pressKey("o", { ctrl: true }); await ui.flush()
     ui.mockInput.pressEscape(); await ui.flush()

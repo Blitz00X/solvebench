@@ -36,10 +36,27 @@ async function waitForContent(h: Awaited<ReturnType<typeof setup>>, text: string
 }
 
 describe("workbench keyboard and mouse flow", () => {
+  test("opening a task starts with its statement; Next task returns from Code to Problem", async () => {
+    const h = await setup()
+    try {
+      h.mockInput.pressEnter(); await h.waitFor(() => h.exercise.getState().openedSlug === "answer"); await h.flush()
+      expect(h.captureCharFrame()).toContain("PROBLEM:")
+      await waitForContent(h, "Return seven.")
+      expect(h.captureCharFrame()).toContain("focus:content")
+      expect(find(h.renderer.root, "editor")).toBeUndefined()
+      h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
+      expect(h.captureCharFrame()).toContain("focus:editor")
+      h.mockInput.pressKey("F7"); await h.waitFor(() => h.exercise.getState().openedSlug === "other"); await h.flush()
+      expect(h.captureCharFrame()).toContain("PROBLEM:")
+      expect(h.captureCharFrame()).toContain("focus:content")
+      expect(find(h.renderer.root, "editor")).toBeUndefined()
+    } finally { await h.cleanup() }
+  })
   test("exit confirmation blocks background mouse actions without saving or switching tasks", async () => {
     const h = await setup(140, 40, () => {})
     try {
       h.mockInput.pressEnter(); await h.waitFor(() => h.exercise.getState().openedSlug === "answer"); await h.flush()
+      h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
       ;(find(h.renderer.root, "editor") as TextareaRenderable).setText("unsaved answer"); await h.flush()
       h.mockInput.pressCtrlC(); await h.flush()
       await h.mockMouse.click(34, 37); await h.flush()
@@ -54,6 +71,7 @@ describe("workbench keyboard and mouse flow", () => {
     const h = await setup(140, 40, () => { exits++ })
     try {
       h.mockInput.pressEnter(); await h.waitFor(() => h.exercise.getState().openedSlug === "answer"); await h.flush()
+      h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
       ;(find(h.renderer.root, "editor") as TextareaRenderable).setText("def answer():\n    return 7\n"); await h.flush()
       h.mockInput.pressCtrlC(); await h.flush()
       expect(h.captureCharFrame()).toContain("UNSAVED CHANGES")
@@ -71,6 +89,7 @@ describe("workbench keyboard and mouse flow", () => {
     const h = await setup(140, 40, () => { exits++ })
     try {
       h.mockInput.pressEnter(); await h.waitFor(() => h.exercise.getState().openedSlug === "answer"); await h.flush()
+      h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
       ;(find(h.renderer.root, "editor") as TextareaRenderable).setText("unsaved"); await h.flush()
       h.exercise.deps.write = async () => { throw new Error("disk is read-only") }
       h.mockInput.pressCtrlC(); await h.flush()
@@ -415,13 +434,16 @@ describe("workbench keyboard and mouse flow", () => {
       expect(h.captureCharFrame()).not.toContain("Search languages")
     } finally { await h.cleanup() }
   })
-  test("Enter opens the selected task, code is editable, Ctrl+E leaves the editor", async () => {
+  test("Enter opens the problem, Ctrl+E enters the editor and leaves it again", async () => {
     const h = await setup()
     try {
       expect(h.captureCharFrame()).toContain("focus:list")
       h.mockInput.pressEnter()
       await h.waitFor(() => h.exercise.getState().openedSlug === "answer")
       await h.flush()
+      expect(h.captureCharFrame()).toContain("focus:content")
+      expect(h.captureCharFrame()).toContain("PROBLEM:")
+      h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
       expect(h.captureCharFrame()).toContain("focus:editor")
       expect(h.captureCharFrame()).toContain("return 1")
       h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
@@ -432,6 +454,7 @@ describe("workbench keyboard and mouse flow", () => {
     const h = await setup()
     try {
       h.mockInput.pressEnter(); await h.waitFor(() => h.exercise.getState().openedSlug === "answer"); await h.flush()
+      h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
       const editor = find(h.renderer.root, "editor") as TextareaRenderable
       editor.setText("def answer():\n    return 7\n")
       await h.flush()
@@ -463,7 +486,9 @@ describe("workbench keyboard and mouse flow", () => {
     try {
       const row = find(h.renderer.root, "exercises")!
       await h.mockMouse.click(row.x + 5, row.y + 3)
-      await h.waitFor(() => h.exercise.getState().openedSlug === "answer")
+      await h.waitFor(() => h.exercise.getState().openedSlug === "answer"); await h.flush()
+      expect(h.captureCharFrame()).toContain("PROBLEM:")
+      expect(h.captureCharFrame()).toContain("focus:content")
       h.mockInput.pressKey("l", { ctrl: true }); await h.flush()
       await h.mockInput.typeText("yardım et")
       h.mockInput.pressEnter()
@@ -475,6 +500,7 @@ describe("workbench keyboard and mouse flow", () => {
     const h = await setup()
     try {
       h.mockInput.pressEnter(); await h.waitFor(() => h.exercise.getState().openedSlug === "answer"); await h.flush()
+      h.mockInput.pressKey("e", { ctrl: true }); await h.flush()
       const editor = find(h.renderer.root, "editor") as TextareaRenderable
       editor.setText("def answer():\n    return 7\n"); await h.flush()
       h.mockInput.pressKey("F6"); await h.flush()

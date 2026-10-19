@@ -50,7 +50,7 @@ test("capture truthful offline workflow", async () => {
   try {
     await exercise.init(); await settle()
     h.mockInput.pressEnter(); await waitFor(() => exercise.getState().openedSlug === "solvebench-sample-sum-two")
-    h.mockInput.pressEscape(); h.mockInput.pressArrow("left"); await settle()
+    await settle()
     await capture("01-problem", 5, "Open the bundled local exercise")
     h.mockInput.pressKey("e", { ctrl: true }); await settle()
     const editor = find(h.renderer.root, "editor") as TextareaRenderable

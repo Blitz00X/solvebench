@@ -36,7 +36,7 @@ the workflow has run on the public host.
 
 | Check | Current release evidence |
 | --- | --- |
-| Frozen dependency install, typecheck, complete test suite | 2026-10-19: Bun 1.4.2, frozen install and typecheck passed; 224 tests passed, 0 failed, 702 assertions across 29 files |
+| Frozen dependency install, typecheck, complete test suite | 2026-10-19: Bun 1.4.2, frozen install and typecheck passed; 225 tests passed, 0 failed, 715 assertions across 29 files |
 | Installer failure/reinstall/update/data-preservation harness | 2026-10-19: pre-rename baseline: 13 cases passed; renamed installer: 12 offline harness cases and a real cache-only installation/PTY passed; rollback, concurrency, foreign launcher and saved data covered |
 | Real Local import/edit/save/test/reopen in PTY | 2026-10-19: real launcher import/edit/failing and passing F5 passed; installed-sample PTY also passed save/exit/reopen |
 | Fullscreen/Unicode/keyboard launcher PTY | 2026-10-19: real launcher passed Markdown heading style, center/AI fullscreen, Unicode input, focus navigation, F5 and narrow-screen resize |

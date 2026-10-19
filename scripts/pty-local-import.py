@@ -63,7 +63,8 @@ with tempfile.TemporaryDirectory(prefix="solvebench-local-pty-") as workspace:
         assert "IMPORT EXERCISES" not in frame(), frame()
         assert "Add Two Numbers" in frame(), frame()
         send(b"\r")
-        wait_for("focus:editor")
+        wait_for("PROBLEM:")
+        wait_for("focus:content")
         send(b"\x1b[15~")  # F5: incomplete starter must fail
         wait_for("TEST RESULTS")
         wait_for("0/1 passed")
