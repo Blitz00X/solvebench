@@ -2,7 +2,9 @@
 
 SolveBench is an early Linux alpha. Small, reproducible fixes to installation,
 the Local exercise flow, keyboard navigation and error messages are especially
-useful. Read [AGENTS.md](AGENTS.md) for the product and architecture contracts.
+useful. Read [AGENTS.md](AGENTS.md) for the product and architecture contracts
+and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the current package layout.
+Participation is covered by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Development
 
@@ -16,6 +18,7 @@ From the repository root:
 ```sh
 bun install --frozen-lockfile
 bun run typecheck
+bun run verify:docs
 bun test
 bash scripts/test-installer.sh
 ```
@@ -66,6 +69,7 @@ regression test for behavioral fixes. Keep unrelated refactors separate and do
 not include downloaded exercises, credentials, personal provider configuration,
 databases or terminal captures containing private content.
 
-For bugs, use the repository's bug report form once a public repository is
-available. Never attach API keys, session cookies or unredacted configuration.
-See [SECURITY.md](SECURITY.md) for sensitive reports.
+For bugs, use the repository's bug report form at
+<https://github.com/Blitz00X/solvebench/issues>. Never attach API keys, session
+cookies or unredacted configuration. Use the pull-request template and list the
+checks you ran. See [SECURITY.md](SECURITY.md) for sensitive reports.

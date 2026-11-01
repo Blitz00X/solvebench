@@ -1,77 +1,18 @@
-# Direct chat with a real model — setup
+# Connect a real model (optional)
 
-SolveBench works offline out of the box (a deterministic mock provider).
-To talk to a real model, point it at an OpenAI-compatible endpoint.
+SolveBench works without a model. The default assistant is a deterministic
+offline mock, and the UI labels it **Offline demo · no AI model connected**.
+Connecting a real model is optional.
 
-## 1. Start the app once
+The assistant uses an OpenAI-compatible `/chat/completions` endpoint. It sends
+the opened exercise, current solution buffers, loaded test files and the latest
+test output. See [PRIVACY.md](../PRIVACY.md) before sending private material.
 
-```bash
-cd ~/Documents/GitHub/solvebench
-bun run dev
-```
+## 1. Create a provider configuration
 
-Press `Ctrl+L`, type `/config`, press Enter. It prints the current provider
-state and the exact steps below.
-
-## Ollama Cloud (verified working)
-
-Ollama Cloud exposes an OpenAI-compatible endpoint, so it works without any
-code change:
-
-```json
-{
-  "provider": {
-    "kind": "http",
-    "baseUrl": "https://ollama.com/v1",
-    "model": "glm-5.3-flash",
-    "apiKeyEnv": "SOLVEBENCH_API_KEY",
-    "maxTokens": 4096,
-    "timeoutMs": 120000
-  }
-}
-```
-
-Get a key from https://ollama.com/settings/keys and list the available models:
-
-```bash
-curl https://ollama.com/v1/models -H "authorization: Bearer $SOLVEBENCH_API_KEY"
-```
-
-Models seen working: `glm-5.3-flash`, `gpt-oss:20b`, `deepseek-v4.1-flash`,
-`nemotron-3-nano:30b`, `gemma4:31b`, `kimi-k2.6`, `minimax-m3`.
-
-### Speed and thinking
-
-Most Ollama Cloud models think before answering. Thinking costs latency and
-fills the transcript with internal monologue. Set `reasoningEffort` to turn it
-off:
-
-```json
-{ "reasoningEffort": "none" }
-```
-
-Measured on this machine (3 runs each, same question):
-
-| Model | effort | avg latency | thinking in reply |
-|---|---|---|---|
-| deepseek-v4.1-flash | none | **~1.0s** | no |
-| deepseek-v4.1-flash | low | ~1.4s | yes |
-| gemma4:31b | none | ~1.5s | no |
-| glm-5.3-flash | low | ~2.1s | no |
-| glm-5.3-flash | none | ~7.0s | no |
-
-`reasoningEffort` is optional: when omitted, the request is sent unchanged and
-the provider default applies. On models without thinking it is ignored.
-
-Note on token budget: thinking tokens count against `maxTokens`. Keep it at
-4096 or higher. If the budget runs out mid-thought, `content` comes back empty;
-the app then shows the reasoning with a note and marks the reply degraded
-instead of displaying a blank answer.
-
-## 2. Create the config file
-
-Create `solvebench.config.json` in the repository you want to analyze (or in
-`~/.config/solvebench/config.json` for all repositories):
+Create `solvebench.config.json` in the workspace you open with `--repo`, or
+create `~/.config/solvebench/config.json` to apply it to every workspace. The
+workspace file takes precedence.
 
 ```json
 {
@@ -79,69 +20,82 @@ Create `solvebench.config.json` in the repository you want to analyze (or in
     "kind": "http",
     "baseUrl": "https://api.openai.com/v1",
     "model": "gpt-4o-mini",
+    "apiKeyEnv": "SOLVEBENCH_API_KEY",
+    "maxTokens": 4096,
+    "temperature": 0,
+    "timeoutMs": 60000
+  }
+}
+```
+
+- `baseUrl` is the API root, without `/chat/completions`.
+- `apiKeyEnv` is the **name** of an environment variable, never the key itself.
+- `maxTokens`, `temperature` and `timeoutMs` are optional.
+- `reasoningEffort` (`none`, `low`, `medium`, `high`) is optional and is sent as
+  `reasoning_effort` for models that support it.
+
+A local OpenAI-compatible server works the same way:
+
+```json
+{
+  "provider": {
+    "kind": "http",
+    "baseUrl": "http://localhost:11434/v1",
+    "model": "your-installed-model",
     "apiKeyEnv": "SOLVEBENCH_API_KEY"
   }
 }
 ```
 
-Notes:
+The HTTP provider always sends a bearer token. If your local server ignores
+authentication, still set the named variable to any non-empty value.
 
-- `apiKeyEnv` is the *name* of the environment variable. The key itself is
-  never written to this file.
-- `solvebench.config.json` is gitignored.
-- `baseUrl` must be an OpenAI-compatible `/chat/completions` endpoint
-  (OpenAI, OpenRouter, Groq, a local llama.cpp/Ollama OpenAI shim, ...).
+There is no `/config` command in the UI. Edit the file and restart SolveBench.
+The header shows the active connection (`http:<model>`) or the offline demo
+label.
 
-## 3. Provide the key
+## 2. Provide the key
 
-Either export it in your shell:
+Export the variable in the shell that starts SolveBench:
 
-```bash
-export SOLVEBENCH_API_KEY=sk-...
+```sh
+export SOLVEBENCH_API_KEY='your-key'
+solvebench --sample
 ```
 
-Or put it in `.env` in the repository root (Bun loads `.env` automatically):
+During `bun run dev`, Bun also loads `.env` from the source root:
 
-```bash
+```sh
 cp .env.example .env
-# edit .env, set SOLVEBENCH_API_KEY=sk-...
+# edit .env and set SOLVEBENCH_API_KEY=...
+bun run dev
 ```
 
-## 4. Use it
+The installed launcher runs from its release directory, so an exported variable
+is the reliable path there. Do not put the key value in `solvebench.config.json`.
+Configuration files and `.env` are gitignored.
 
-```bash
-bun run dev          # from the repo
-pairs                # from anywhere, analyzes the current directory
-pairs --repo ~/other # analyze another repository
-pairs --no-index     # skip indexing on start
-```
+## 3. Ask from the assistant pane
 
-Then press `Ctrl+L`, type a message, and read the answer in the CHAT pane:
+Press **Ctrl+L**, type a message and press Enter. Ordinary text sends a message;
+no slash command is required. The assistant automatically receives the opened
+exercise, the code on screen and the latest test result.
 
-```
-/chat what does rotateRefreshToken do?
-/chat why does verify() fail when the token is empty?
-/clear
-```
-
-`Ctrl+G` toggles between the NAVIGATOR and CHAT panes.
-
-## Safety
-
-- Chat never modifies files, never creates a transaction and never changes the
-  driver. It only appends to the transcript.
-- The model is told explicitly that it cannot modify the repository.
-- If the provider is unreachable or the key is missing, replies are marked
-  `(degraded)` and the app keeps working.
-- Keys stay in the environment. `/config` reports whether a key is set, never
-  its value.
+- **Esc** leaves the input for the assistant reading pane.
+- **f** toggles fullscreen while reading.
+- Switching the opened task clears the previous task's chat.
+- The model returns text only; it cannot edit files or run commands.
 
 ## Troubleshooting
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `(degraded) missing-api-key` | key variable not set | export it, or add `.env` |
-| `Cannot find module 'react/jsx-dev-runtime'` | ran `bun <path>/main.tsx` from another cwd | use `bin/pairs`, or `bun run dev` from the repo |
-| `(degraded) http-error:401` | wrong key | check the value in `.env` |
-| `(degraded) http-error:404` | `baseUrl` missing `/v1` or wrong host | verify the endpoint |
-| `(degraded) timeout` | slow/unreachable host | raise `timeoutMs` in the config |
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| `(provider unavailable: missing-api-key)` | The named variable is empty | Export it before launching, or set it in `.env` for `bun run dev` |
+| `(provider unavailable: http-error:401)` | Wrong key or endpoint | Check the variable and the provider account |
+| `(provider unavailable: http-error:404)` | `baseUrl` is wrong | Include the API version root, for example `/v1` |
+| `(provider unavailable: timeout)` | Slow or unreachable host | Raise `timeoutMs` or check the network |
+| `(the model ran out of output budget while reasoning; raise maxTokens)` | Reasoning used the whole budget | Raise `maxTokens` |
+| The header still says **Offline demo** | Configuration was not found or `kind` is not `http` | Check the workspace and global paths, then restart |
+
+Malformed configuration is reported on stderr at startup and falls back to the
+offline mock. The key value is never printed.

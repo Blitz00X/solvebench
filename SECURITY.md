@@ -4,11 +4,10 @@ SolveBench is an early alpha. Security fixes target the latest alpha; there
 is no long-term support branch or promised response time.
 
 Do not put exploit details, private code, API keys or cookies in a public issue.
-If the public GitHub repository enables private vulnerability reporting, use
-its Security tab's **Report a vulnerability** action. A public repository and
-private reporting channel have not yet been established for this source
-snapshot. Until one is published, ask the maintainer for a private channel
-without disclosing the vulnerability or sensitive attachments publicly.
+Use the repository's Security tab and its **Report a vulnerability** action when
+private vulnerability reporting is enabled. If it is not enabled, open a minimal
+public issue asking the maintainer for a private channel, without disclosing the
+vulnerability or sensitive attachments.
 
 Include the version, OS, affected component, minimal reproduction, expected
 impact and a sanitized example. If a credential was exposed, revoke it through

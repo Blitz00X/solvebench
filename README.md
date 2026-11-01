@@ -40,10 +40,11 @@ the export is unnecessary. The installed workspace lives separately at
 the previous launcher. Repeat the same install command to update a checkout;
 `--prefix DIR` selects a different installation root.
 
-The selected public repository is `Blitz00X/solvebench`; publication is pending.
-The installer supports a pinned GitHub tag with
-`--repo Blitz00X/solvebench --version v0.1.0-alpha.1`. That download command
-becomes usable after the repository and tag are published.
+The source and releases live at
+[Blitz00X/solvebench](https://github.com/Blitz00X/solvebench); the alpha tag is
+`v0.1.0-alpha.1`. From a checkout, the installer can fetch that tag instead of
+the local tree with
+`bash install.sh --repo Blitz00X/solvebench --version v0.1.0-alpha.1`.
 
 1. `--sample` opens **Add Two Numbers** on the Local platform.
 2. Press **F5**. The starter intentionally fails.
@@ -67,8 +68,9 @@ bun run dev
 The developer launcher uses the current directory by default. A Git repository
 is not required for an exercise workspace.
 
-### Existing PairHarness workspaces
+### Migrating from PairHarness
 
+The rename is compatible; no migration step is required.
 SolveBench reads `pairharness.config.json`, the previous global configuration,
 and `PAIRHARNESS_API_KEY` for compatibility. Workspace configuration precedes
 global configuration; within each location the new filename takes precedence.
@@ -208,8 +210,12 @@ Set a provider in `solvebench.config.json` in the workspace, or
 ```
 
 Use your provider's actual endpoint/model and put any required key in the named
-environment variable. Configuration and `.env` are ignored by Git. Without a
-real provider, responses come from the labelled offline mock.
+environment variable. The HTTP provider always sends a bearer token, so set the
+variable even for a local endpoint that ignores authentication. Configuration
+and `.env` are ignored by Git. Without a real provider, responses come from the
+labelled offline mock. Restart after editing the configuration. See
+[AI setup details](docs/CHAT_SETUP.md) for the full field list and
+troubleshooting.
 
 The configured provider receives the opened statement, current solution files,
 relevant test files, latest raw test output and conversation. Avoid sending
@@ -223,18 +229,21 @@ tasks clears the previous task's chat; late replies from the old task are hidden
 ## Contributing and checks
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md),
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [CHANGELOG.md](CHANGELOG.md),
+[the architecture overview](docs/ARCHITECTURE.md),
 [third-party notices](THIRD_PARTY_NOTICES.md) and the [MIT license](LICENSE).
-Bug/feedback templates are included. For repeatable checks, install Python 3,
-pytest and bats alongside Bun, then run:
+Bug/feedback and pull-request templates are included. For repeatable checks,
+install Python 3, pytest and bats alongside Bun, then run:
 
 ```sh
 bun run typecheck
+bun run verify:docs
 bun test
 bash scripts/test-installer.sh
 ```
 
 [Alpha validation](docs/ALPHA_VALIDATION.md) records exact checks and remaining
-publication gates. Real terminal scripts use Python `pyte`:
+release gates. Real terminal scripts use Python `pyte`:
 `scripts/pty-local-import.py` tests import/edit/F5;
 `scripts/pty-installed-sample.py` tests a fresh installed sample and safe restart.
 `scripts/pty-workbench.py` additionally exercises the configured Exercism

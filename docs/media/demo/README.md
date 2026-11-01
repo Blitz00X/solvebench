@@ -18,6 +18,7 @@ python3 scripts/demo-render.py
 
 The capture requires Bun and the installed repository dependencies. Raster/encode requires Python Pillow, DejaVu fonts at the paths in `demo-render.py`, and ffmpeg. Encoding uses actual captured character spans/colors. The FFmpeg fallback produces the delivered video; the companion HyperFrames source remains editable.
 
-HyperFrames 0.8.174 `check --json` passed with the browser enabled: zero errors in lint/runtime/layout/motion/contrast. One reviewed warning remains because the deliberately sequential 9-capture flow shares a single visual track. The contrast audit sees PNG images and therefore performs zero text checks; readable text was visually inspected in the rendered captures. No motion assertions apply to static capture holds.
-
-Workflow installer limitation: the initial npm cache was unavailable (`ENOTDIR` at `~/.npm`), and the default Node 20 was below the CLI minimum. A task-local cache plus existing Node 24 resolved CLI startup. The workflow Git clone then stalled and was terminated; installation exited 1 with `No valid skills found`. The core composition contract was used for the companion source; the specialized workflow was not executed. The delivered MP4/GIF was encoded with FFmpeg from actual UI captures, not rendered by HyperFrames.
+The composition source is editable. The delivered MP4/GIF was encoded with
+FFmpeg from the actual UI captures. The HyperFrames `check --json` report in
+`hyperframes-check.json` is the source for its lint/runtime/layout/motion
+results; it is not a claim that the video was rendered by HyperFrames.

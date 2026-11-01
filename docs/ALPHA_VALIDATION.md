@@ -1,8 +1,8 @@
 # Alpha validation record
 
-Target: `v0.1.0-alpha.1`, Linux. This document distinguishes executable checks
-from work that requires a release host, platform accounts or another person.
-It is not evidence that an unpublished release URL works.
+Target: `v0.1.0-alpha.1`, Linux. This document separates executable checks from
+work that needs a release host, platform accounts or another person. It is not
+evidence that a published download URL works from every network.
 
 ## Repeatable local checks
 
@@ -11,6 +11,7 @@ From the source root, with Bun 1.4.2, Python 3, pytest and bats installed:
 ```sh
 bun install --frozen-lockfile
 bun run typecheck
+bun run verify:docs
 bun test
 bash scripts/test-installer.sh
 ```
@@ -20,35 +21,33 @@ For real terminal checks, install `pyte` into a Python environment and run:
 ```sh
 python3 scripts/pty-local-import.py
 python3 scripts/pty-installed-sample.py
-bash scripts/check-launcher.sh
+python3 scripts/pty-workbench.py   # needs a downloaded Exercism task
 ```
 
 If `pyte` is in a virtual environment, use its Python executable for the first
-command and set `WORKBENCH_TEST_PYTHON` to that executable for the second.
-The Local smoke script uses a temporary workspace and does not call a model
-or submit a solution. The renderer tests additionally exercise narrow screens,
-Unicode input, focus transitions, scrolling, drafts and fullscreen state.
+command and set `WORKBENCH_TEST_PYTHON` to that executable for the second. The
+Local smoke script uses a temporary workspace and does not call a model or
+submit a solution.
 
-Do not copy historical test totals into a release announcement. The table records the
-actual final command results and runtime version. The source tree is exported
-as the local `v0.1.0-alpha.1` tag after these checks. GitHub Actions must be checked separately after
-the workflow has run on the public host.
+## Results
 
-| Check | Current release evidence |
+| Check | Evidence |
 | --- | --- |
-| Frozen dependency install, typecheck, complete test suite | 2026-10-19: Bun 1.4.2, frozen install and typecheck passed; 225 tests passed, 0 failed, 715 assertions across 29 files |
-| Installer failure/reinstall/update/data-preservation harness | 2026-10-19: pre-rename baseline: 13 cases passed; renamed installer: 12 offline harness cases and a real cache-only installation/PTY passed; rollback, concurrency, foreign launcher and saved data covered |
-| Real Local import/edit/save/test/reopen in PTY | 2026-10-19: real launcher import/edit/failing and passing F5 passed; installed-sample PTY also passed save/exit/reopen |
-| Fullscreen/Unicode/keyboard launcher PTY | 2026-10-19: real launcher passed Markdown heading style, center/AI fullscreen, Unicode input, focus navigation, F5 and narrow-screen resize |
-| Clean installed `solvebench --sample` | 2026-10-19: temporary HOME/prefix, no provider/platform credentials; help/version without runtime state, populated starter, failing F5, edit, cancel/save exit, restart and 3 passing examples verified |
-| Clean Linux container (pre-rename baseline) | 2026-10-19: Python 3.12 Debian slim container, Bun 1.4.2, fresh frozen install; UID 1000 with no personal configuration: typecheck, 219 tests/686 assertions, 12 installer cases and installed sample PTY all passed |
-| Hosted GitHub Actions | Not run on a public repository |
-| Fresh public release download/tag URL | Blocked until repository identity and release exist |
-| Live Exercism account workflow | Configured exercise open and local F5 verified by launcher PTY; live submit/completion not validated |
+| Frozen dependency install, typecheck, documentation links, complete test suite | 2026-11-01: Bun 1.4.2; frozen install and typecheck passed; documentation link check passed; 225 tests passed, 0 failed, 715 assertions across 29 files |
+| Installer failure/reinstall/update/data-preservation harness | 2026-11-01: 12 offline cases passed, including rollback, concurrency, foreign launcher, symlink and saved-data cases |
+| Clean source installation with a temporary HOME | 2026-11-01: `bash install.sh --source "$PWD"` installed under a temporary HOME/prefix; `solvebench --help` and `--version` worked without creating runtime state |
+| Clean installed `solvebench --sample` | 2026-11-01: temporary HOME/prefix, no provider or platform credentials; populated starter, failing F5, edit, cancel/save exit, restart and 3 passing examples verified |
+| Real Local import/edit/save/test/reopen in PTY | 2026-11-01: import of the bundled collection, editor paste, failing and passing F5, saved copy and persistent restart passed |
+| Fullscreen/Unicode/keyboard launcher PTY | 2026-11-01: Markdown heading style, center/AI fullscreen, Unicode input, focus navigation, F5 and narrow-screen resize passed against a downloaded Exercism task |
+| Hosted GitHub Actions | Workflow is committed; this environment did not observe a run on the public host |
+| Live Exercism account workflow | A configured exercise can be opened and tested locally; live submit/completion was not validated |
 | Live LeetCode account workflow | Not validated for this alpha |
 | macOS / Windows | Not validated; no support claim |
 | Independent person's first-install trial | Not performed |
-| Demo recording | 36.54-second 1080p MP4 and GIF from actual rendered UI captures and real Local test runs; scripted offline provider explicitly labelled; see media/demo/README.md |
+| Demo recording | 36.54-second 1080p MP4 and GIF from actual rendered UI captures and real Local test runs; the scripted offline provider is labelled; see [media/demo/README.md](media/demo/README.md) |
+
+Test totals change as the suite grows. The command output, not a copied number,
+is authoritative for a given revision.
 
 ## Clean Local acceptance flow
 
@@ -70,66 +69,30 @@ the workflow has run on the public host.
    tools, unwritable storage and timeout. Report actionable errors without
    disclosing credentials or silently replacing solutions.
 
-## Source-tree and history audit
+## Release checklist
 
-The 2026-10-19 development-history audit found runtime database snapshots in
-old commits, containing session and source-graph metadata and personal paths.
-They are absent from the current tracked source tree. The one historical
-credential-format match inspected was a documented example key in a test
-fixture. Pattern searches are not proof that every possible secret is absent.
+Before sharing a build, verify the exact revision that will be published:
 
-**Do not publish the old development history.** The intended `public-alpha`
-export is a new root commit from the audited final source tree, with no parent
-link to development history. Keep development refs private; verify the public
-ref's complete reachable history and packaged files before pushing. Merely
-deleting a file in the latest commit does not remove it from earlier commits.
-The export is created and audited locally as the `public-alpha` root and
-`v0.1.0-alpha.1` tag. Neither development refs nor the public ref have been pushed.
-
-Audit source files, untracked files selected for release and the exported Git
-tree for credential formats, personal paths, runtime databases, downloaded
-platform content and oversized files. The committed sample is intentionally
-incomplete project example code; users' imported exercises are not release
-assets. Keep credential values out of audit output. An archive/installer must
-include only the reviewed source, licenses, docs, scripts and intended sample.
-
-## Publication gates
-
-Before public sharing, choose the actual GitHub repository owner/name and
-visibility, review the export, create the alpha tag and test its real download
-and setup commands. Confirm CI on that exact revision. Record any manual
-platform tests honestly, arrange an independent installation trial and check
-the target community's current posting rules. A Reddit draft is prepared in
-[REDDIT_DRAFT.md](REDDIT_DRAFT.md); nothing in this checklist authorizes posting.
+- The public tree contains only reviewed source, licenses, docs, scripts and the
+  intended sample.
+- No credential, cookie, personal path, runtime database or downloaded platform
+  content is reachable from the public ref.
+- CI passes on the public host for that revision.
+- The real download command and tag resolve from a clean machine.
+- Manual platform tests are recorded honestly; an independent installation trial
+  is arranged where possible.
+- The target community's current posting rules are checked separately from this
+  technical checklist.
 
 ## Review evidence
 
-The final source candidate audit on 2026-10-19 checked 179 tracked/nonignored
-files: no detected credential formats, actual personal paths, runtime databases,
-symlinks or files larger than 1 MB. Local Markdown links resolved. This is a
-pattern-based review, not a guarantee that arbitrary secrets are detectable.
-The public-root archive is checked separately after creation.
+The release candidate audit checks tracked and nonignored files for credential
+formats, personal paths, runtime databases, symlinks and oversized files. Local
+Markdown links are checked by `bun run verify:docs`. Pattern searches reduce
+risk; they are not proof that every possible secret is absent.
 
 Regression tests cover a pre-mounted sample initially rendering an empty editor,
-and background mouse actions mutating the exercise while exit confirmation was
+and background mouse actions mutating the exercise while exit confirmation is
 open. Both failures were reproduced before their fixes and pass afterward.
 Read-only import storage was tested under an unprivileged user; save-failure
 confirmation keeps the dirty solution and reports the error.
-
-The initial clean restart test exposed a missing explicit controller initialization
-in the test itself when Local was already the default source. It was corrected
-and the complete suite was rerun successfully under UID 1000 in the container.
-
-## SolveBench rename verification — 2026-10-19
-
-The renamed tree passed typecheck and 224 tests / 702 assertions. Installer
-failure/reinstall/data-preservation checks passed under the new command name.
-A fresh temporary-HOME installation using only the existing local Bun cache
-passed the installed-sample terminal flow. Demo captures and MP4/GIF were
-regenerated with the SolveBench title. Compatibility regressions cover old
-configuration, the previous API-key environment variable, persisted progress
-and an older saved sample attempt. Both private naming schemes are excluded.
-
-Target repository: `Blitz00X/solvebench`, public, authorized by the owner.
-Publication is pending. The owner requires waiting for a hotspot before any
-further GitHub/SSH network attempt; do not switch ports or try another route.

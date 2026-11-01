@@ -1,5 +1,8 @@
 # AGENTS.md — SolveBench implementation rules
 
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the current package
+layout and data flow. This file records the contracts that must not regress.
+
 ## Mission
 Build an exercise-first coding workbench for Exercism and LeetCode. The user chooses a task, edits its solution, runs tests, submits and asks an always-context-aware AI assistant. The current task and current solution are the product's single source of truth.
 
@@ -42,7 +45,7 @@ Release-blocking tests:
 
 ## Scope rules
 
-Do not implement before MVP:
+Out of scope for the alpha:
 
 - debugger;
 - extension marketplace;
@@ -61,4 +64,6 @@ Do not implement before MVP:
 
 ## Upstream use
 
-Study OpenCode/OpenTUI source, but avoid a permanent whole-repo fork. Keep any future OpenCode integration adapter-scoped under `packages/opencode-adapter`.
+Study OpenCode/OpenTUI source, but avoid a permanent whole-repo fork. Any future
+OpenCode integration stays adapter-scoped rather than changing the exercise
+workflow or the human-owned editor.
