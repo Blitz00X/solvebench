@@ -51,7 +51,9 @@
     "apps/*/src/**/*.ts",
     "apps/*/src/**/*.tsx",
     "apps/*/test/**/*.ts",
-    "apps/*/test/**/*.tsx"
+    "apps/*/test/**/*.tsx",
+    "scripts/**/*.ts",
+    "scripts/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

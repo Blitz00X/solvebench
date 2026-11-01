@@ -4,6 +4,31 @@
   "private": true,
   "type": "module",
   "license": "MIT",
+  "description": "Terminal workbench for solving coding exercises with an editor, test runner and optional context-aware assistant.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blitz00X/solvebench.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Blitz00X/solvebench/issues"
+  },
+  "homepage": "https://github.com/Blitz00X/solvebench#readme",
+  "keywords": [
+    "coding-exercises",
+    "exercism",
+    "leetcode",
+    "terminal",
+    "tui",
+    "opentui",
+    "solidjs",
+    "bun",
+    "typescript",
+    "education"
+  ],
+  "packageManager": "bun@1.4.2",
+  "engines": {
+    "bun": "1.4.2"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -14,6 +39,7 @@
     "test:acceptance": "bun test apps/tui/src/__tests__/exercise-keys.test.tsx apps/tui/src/__tests__/exercise-ui.test.tsx apps/tui/test/exercise-session.test.ts",
     "dev": "bun apps/tui/src/main.tsx",
     "verify:persistence": "bun test packages/storage",
+    "verify:docs": "bun scripts/check-docs.ts",
     "check:launcher": "bash scripts/check-launcher.sh",
     "verify:catalog": "bun scripts/verify-catalog.ts",
     "verify:runner": "bun test packages/exercise/test/runners.test.ts",
