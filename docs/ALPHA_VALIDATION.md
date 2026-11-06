@@ -1,6 +1,6 @@
 # Alpha validation record
 
-Target: `v0.1.0-alpha.1`, Linux. This document separates executable checks from
+Target: `v0.1.0-alpha.2`, Linux. This document separates executable checks from
 work that needs a release host, platform accounts or another person. It is not
 evidence that a published download URL works from every network.
 
@@ -12,7 +12,9 @@ From the source root, with Bun 1.4.2, Python 3, pytest and bats installed:
 bun install --frozen-lockfile
 bun run typecheck
 bun run verify:docs
+bun run verify:release
 bun test
+bun run test:coverage   # optional per-file coverage report
 bash scripts/test-installer.sh
 ```
 
@@ -34,7 +36,8 @@ submit a solution.
 | Check | Evidence |
 | --- | --- |
 | Frozen dependency install, typecheck, documentation links, complete test suite | 2026-11-01: Bun 1.4.2; frozen install and typecheck passed; documentation link check passed; 225 tests passed, 0 failed, 715 assertions across 29 files |
-| Installer failure/reinstall/update/data-preservation harness | 2026-11-01: 12 offline cases passed, including rollback, concurrency, foreign launcher, symlink and saved-data cases |
+| `v0.1.0-alpha.2` release-tree audit and local checks | 2026-11-06: Bun 1.4.2; typecheck passed; 26 documentation links passed; release audit found no private paths, credential shapes, databases, symlinks or oversized files across 147 tracked files and HEAD history; version, installer pin and tag agree; 225 tests passed, 0 failed, 715 assertions across 29 files |
+| Installer failure/reinstall/update/data-preservation harness | 2026-11-01 and 2026-11-06: 12 offline cases passed, including rollback, concurrency, foreign launcher, symlink and saved-data cases; the harness now reads the pinned version from `install.sh` |
 | Clean source installation with a temporary HOME | 2026-11-01: `bash install.sh --source "$PWD"` installed under a temporary HOME/prefix; `solvebench --help` and `--version` worked without creating runtime state |
 | Clean installed `solvebench --sample` | 2026-11-01: temporary HOME/prefix, no provider or platform credentials; populated starter, failing F5, edit, cancel/save exit, restart and 3 passing examples verified |
 | Real Local import/edit/save/test/reopen in PTY | 2026-11-01: import of the bundled collection, editor paste, failing and passing F5, saved copy and persistent restart passed |
@@ -75,8 +78,10 @@ Before sharing a build, verify the exact revision that will be published:
 
 - The public tree contains only reviewed source, licenses, docs, scripts and the
   intended sample.
-- No credential, cookie, personal path, runtime database or downloaded platform
-  content is reachable from the public ref.
+- `bun run verify:release` passes and reports no credential, cookie, personal
+  path, runtime database, symlink or oversized file in the tree or HEAD history.
+- GitHub private vulnerability reporting is enabled, so `SECURITY.md` points at
+  a working private channel rather than a public issue.
 - CI passes on the public host for that revision.
 - The real download command and tag resolve from a clean machine.
 - Manual platform tests are recorded honestly; an independent installation trial

@@ -6,11 +6,18 @@ All notable changes to SolveBench are recorded here. The project follows
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-11-06
+
 ### Added
 
 - Architecture overview in `docs/ARCHITECTURE.md`.
 - Contributor Covenant code of conduct.
 - Pull-request template and a local Markdown link check.
+- Release-tree audit (`bun run verify:release`) that checks tracked files and
+  HEAD history for private paths, credential shapes, databases, symlinks and
+  oversized files, and rejects a version mismatch between `package.json`,
+  `install.sh` and a tag on HEAD.
+- `bun run test:coverage` for a per-file coverage report.
 
 ### Changed
 
@@ -20,6 +27,9 @@ All notable changes to SolveBench are recorded here. The project follows
   current exercise-first UI instead of the earlier pair-programming commands.
 - Package metadata points at the public repository and states the supported Bun
   version.
+- The package version, installer pin, README, changelog and validation record
+  now all name `v0.1.0-alpha.2`; the installer test reads the pinned version
+  instead of duplicating it.
 
 ### Fixed
 

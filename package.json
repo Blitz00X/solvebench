@@ -1,6 +1,6 @@
 {
   "name": "solvebench",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -36,10 +36,12 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "test:acceptance": "bun test apps/tui/src/__tests__/exercise-keys.test.tsx apps/tui/src/__tests__/exercise-ui.test.tsx apps/tui/test/exercise-session.test.ts",
     "dev": "bun apps/tui/src/main.tsx",
     "verify:persistence": "bun test packages/storage",
     "verify:docs": "bun scripts/check-docs.ts",
+    "verify:release": "bun scripts/check-release-tree.ts",
     "check:launcher": "bash scripts/check-launcher.sh",
     "verify:catalog": "bun scripts/verify-catalog.ts",
     "verify:runner": "bun test packages/exercise/test/runners.test.ts",

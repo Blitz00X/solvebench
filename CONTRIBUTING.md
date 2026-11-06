@@ -19,6 +19,7 @@ From the repository root:
 bun install --frozen-lockfile
 bun run typecheck
 bun run verify:docs
+bun run verify:release
 bun test
 bash scripts/test-installer.sh
 ```

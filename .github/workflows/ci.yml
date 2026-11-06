@@ -27,6 +27,8 @@ jobs:
         run: bun run typecheck
       - name: Documentation links
         run: bun run verify:docs
+      - name: Release tree and version
+        run: bun run verify:release
       - name: Test
         run: bun test
       - name: Test installer

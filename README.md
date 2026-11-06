@@ -5,7 +5,7 @@ and an optional context-aware assistant in one window. You write the solution;
 the assistant replies with text. Import your own exercise folders or use the
 Exercism and LeetCode adapters.
 
-**Linux alpha · MIT licensed · v0.1.0-alpha.1.** The Local workflow is the
+**Linux alpha · MIT licensed · v0.1.0-alpha.2.** The Local workflow is the
 release's tested entry point. Live platform account workflows, macOS and Windows
 are not validated for this alpha.
 
@@ -42,9 +42,9 @@ the previous launcher. Repeat the same install command to update a checkout;
 
 The source and releases live at
 [Blitz00X/solvebench](https://github.com/Blitz00X/solvebench); the alpha tag is
-`v0.1.0-alpha.1`. From a checkout, the installer can fetch that tag instead of
+`v0.1.0-alpha.2`. From a checkout, the installer can fetch that tag instead of
 the local tree with
-`bash install.sh --repo Blitz00X/solvebench --version v0.1.0-alpha.1`.
+`bash install.sh --repo Blitz00X/solvebench --version v0.1.0-alpha.2`.
 
 1. `--sample` opens **Add Two Numbers** on the Local platform.
 2. Press **F5**. The starter intentionally fails.
@@ -238,9 +238,12 @@ install Python 3, pytest and bats alongside Bun, then run:
 ```sh
 bun run typecheck
 bun run verify:docs
+bun run verify:release
 bun test
 bash scripts/test-installer.sh
 ```
+
+`bun run test:coverage` prints a per-file coverage table for the same suite.
 
 [Alpha validation](docs/ALPHA_VALIDATION.md) records exact checks and remaining
 release gates. Real terminal scripts use Python `pyte`:

@@ -27,11 +27,12 @@ describe("CLI argument parsing", () => {
     expect(parseArgs(["--sample", "--repo", "/tmp/sample"])).toEqual({ sample: true, repoRoot: "/tmp/sample" })
   })
   test("help and version exit without a terminal or creating workspace files", async () => {
+    const { version } = await Bun.file("package.json").json() as { version: string }
     for (const flag of ["--help", "--version"]) {
       const proc = Bun.spawn([process.execPath, "apps/tui/src/main.tsx", flag], { stdout: "pipe", stderr: "pipe", timeout: 5000 })
       const output = await new Response(proc.stdout).text()
       expect(await proc.exited).toBe(0)
-      expect(output).toContain(flag === "--help" ? "Usage:" : "solvebench 0.1.0-alpha.1")
+      expect(output).toContain(flag === "--help" ? "Usage:" : `solvebench ${version}`)
     }
   })
 })
