@@ -33,6 +33,9 @@ export class LeetCodeSource implements ExerciseSource {
   private catalog: Omit<ExerciseSummary, "trackSlug">[] | null = null
   constructor(readonly workspace: string, private fetchImpl: typeof fetch = fetch, private baseUrl = "https://leetcode.com", private pollDelay = 1000) {}
   async isConfigured(): Promise<boolean> { return true } // Public catalog needs no account.
+  async prepareEnvironment(_track: string, _directory: string, report: (message: string) => void): Promise<void> {
+    report("LeetCode platform judge ready")
+  }
   async connect(credentials: Record<string, string>): Promise<void> {
     if (!credentials.LEETCODE_SESSION || !credentials.csrftoken) throw new Error("LeetCode session and csrf token required")
     this.credentials = credentials

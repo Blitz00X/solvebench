@@ -13,6 +13,7 @@ export class LocalExerciseSource implements ExerciseSource {
   private importing = false
   constructor(readonly root: string) {}
   async isConfigured() { return true }
+  async prepareEnvironment(_track: string, _directory: string, report: (message: string) => void) { report("Local command ready") }
   private async attempt<T>(operation: () => Promise<T>): Promise<Result<T, ExerciseSourceError>> {
     try { return Ok(await operation()) } catch (error) { return Err(sourceError("failed", error instanceof Error ? error.message : String(error))) }
   }

@@ -6,6 +6,18 @@ All notable changes to SolveBench are recorded here. The project follows
 
 ## [Unreleased]
 
+### Added
+
+- CSES source: public catalog, Markdown statements, sample-case import and a
+  local stdin/stdout judge for nine language tracks. No account integration and
+  no submission claim.
+- Central source registry, so a new platform is one source file plus one
+  `register` call; the TUI picks it up without changes.
+- Reusable `runStdinCases()` runner with build steps, per-case timeouts, output
+  limits and whitespace/numeric tolerance.
+- [`docs/ADDING_A_SOURCE.md`](docs/ADDING_A_SOURCE.md) with the adapter recipe and
+  a platform feasibility matrix.
+
 ## [0.1.0-alpha.2] - 2026-11-06
 
 ### Added

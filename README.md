@@ -3,7 +3,7 @@
 Solve coding exercises in your terminal with the question, editor, test results
 and an optional context-aware assistant in one window. You write the solution;
 the assistant replies with text. Import your own exercise folders or use the
-Exercism and LeetCode adapters.
+Exercism, LeetCode and CSES adapters.
 
 **Linux alpha · MIT licensed · v0.1.0-alpha.2.** The Local workflow is the
 release's tested entry point. Live platform account workflows, macOS and Windows
@@ -254,4 +254,6 @@ workspace, navigation, Markdown, fullscreen and Unicode; it needs that setup.
 
 Live verification scripts under `scripts/verify-*.ts` may contact platforms,
 download toolchains or call your configured model. Review them before running.
+`bun run verify:cses` is the no-account check for the public CSES catalog,
+statement import and sample runner.
 Exercises, connections, toolchains and local memory are gitignored.

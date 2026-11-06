@@ -30,6 +30,12 @@ export interface ExerciseSource {
   connect?(credentials: Record<string, string>): Promise<void>
   /** Optional local package import; importing must not execute exercise code. */
   importExercises?(directory: string): Promise<Result<ImportedExercise[], ExerciseSourceError>>
+  /**
+   * Optional environment preparation before a test run. Sources that need no
+   * managed toolchain (a local command or a platform judge) can say so here;
+   * when omitted the composition root falls back to the language toolchains.
+   */
+  prepareEnvironment?(trackSlug: string, directory: string, report: (message: string) => void): Promise<void>
 
   /** True when the source has everything it needs (token, CLI, ...). */
   isConfigured(): Promise<boolean>

@@ -3,7 +3,7 @@ import { existsSync } from "node:fs"
 import type { SessionState } from "@solvebench/shared"
 import { SessionState as SessionStateSchema } from "@solvebench/shared"
 import { openDatabase, ExerciseProgressRepository } from "@solvebench/storage"
-import { ExercismSource, LeetCodeSource, LocalExerciseSource, resolveExercismConfig, ToolchainManager } from "@solvebench/exercise"
+import { createDefaultRegistry, resolveExercismConfig, ToolchainManager } from "@solvebench/exercise"
 import { ExerciseController } from "./exercise-controller"
 import type { ExerciseSource } from "@solvebench/exercise"
 import type { ModelProvider } from "@solvebench/agent-runtime"
@@ -19,7 +19,7 @@ export interface BootstrapOptions {
   exerciseSource?: ExerciseSource
   modelProvider?: ModelProvider
   prepareEnvironment?: boolean
-  initialSource?: "exercism" | "leetcode" | "local"
+  initialSource?: string
 }
 
 export interface BootstrappedApp {
@@ -53,14 +53,19 @@ export async function bootstrapApp(options: BootstrapOptions = {}): Promise<Boot
   const state = SessionStateSchema.parse({ id: sessionId, repoRoot, mode: "pair", driver: "human" })
   const store = createSessionStore(state)
 
-  // Exercise workflow: Exercism source, isolated workspace, persisted progress.
+  // Exercise workflow: registered sources, isolated workspace, persisted progress.
   const exercismConfig = resolveExercismConfig({ projectRoot: repoRoot })
   const toolchains = new ToolchainManager(join(dataDirectory, "toolchains"))
-  const exercismSource = options.exerciseSource ?? new ExercismSource({ config: exercismConfig, toolchains })
-  const leetcodeSource = new LeetCodeSource(join(repoRoot, "exercises/leetcode"))
-  const localSource = new LocalExerciseSource(join(repoRoot, "exercises/local"))
-  const sources = { exercism: exercismSource, leetcode: leetcodeSource, local: localSource }
-  const exerciseSource = options.exerciseSource ?? sources[options.initialSource ?? (exercismConfig.token ? "exercism" : "local")]
+  const registry = createDefaultRegistry()
+  const sources = registry.createAll({
+    repoRoot,
+    workspace: exercismConfig.workspace,
+    dataDirectory,
+    toolchains,
+    exercismConfig,
+  })
+  const requestedSource = options.initialSource ?? (exercismConfig.token ? "exercism" : "local")
+  const exerciseSource = options.exerciseSource ?? sources[requestedSource] ?? sources.local!
   const exerciseProgress = new ExerciseProgressRepository(db)
   const exercise: ExerciseController = new ExerciseController({
     source: exerciseSource,
@@ -68,11 +73,12 @@ export async function bootstrapApp(options: BootstrapOptions = {}): Promise<Boot
     sampleDirectory: resolve(import.meta.dir, "../../../examples/local-exercises"),
     workspace: exercismConfig.workspace,
     progress: exerciseProgress,
-    prepare: options.prepareEnvironment === false ? undefined : (track, directory, report) => exercise.deps.source.id === "local"
-      ? Promise.resolve(report("Local test command ready"))
-      : exercise.deps.source.id === "leetcode"
-      ? Promise.resolve(report("LeetCode platform judge ready"))
-      : toolchains.prepare(track, directory, report),
+    prepare: options.prepareEnvironment === false ? undefined : (track, directory, report) => {
+      const source = exercise.deps.source
+      return source.prepareEnvironment
+        ? source.prepareEnvironment(track, directory, report)
+        : toolchains.prepare(track, directory, report)
+    },
   })
 
   const loadedConfig = loadConfig(repoRoot)

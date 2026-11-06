@@ -9,7 +9,7 @@ test results and assistant context are all derived from them.
 | Area | Location | Responsibility |
 | --- | --- | --- |
 | TUI and composition | `apps/tui` | Bootstrap, Solid/OpenTUI views, keyboard and mouse handling, session controller |
-| Exercise workflow | `packages/exercise` | Local, Exercism and LeetCode adapters, workspace files, runners, toolchain preparation |
+| Exercise workflow | `packages/exercise` | Local, Exercism, LeetCode and CSES adapters, registered through one source registry; workspace files, runners, toolchain preparation |
 | Assistant runtime | `packages/agent-runtime` | Provider configuration, OpenAI-compatible HTTP client, deterministic mock, prompt and context serialization |
 | Persistence | `packages/storage` | SQLite exercise progress and test counts |
 | Shared contracts | `packages/shared` | Session state, chat messages, result unions and Zod schemas |
@@ -81,9 +81,14 @@ of the new data model.
   uploads the solution and then completes the exercise to unlock the next task.
 - **LeetCode** supports public catalog/statements and, with the user's session
   cookies, Run and Submit through the platform judge.
+- **CSES** reads the public problem catalog and statement, imports the published
+  samples and runs them with the selected language toolchain. It has no account
+  integration, so it never submits or claims a platform verdict.
 
-Adapters expose supported actions and connection fields. A missing capability
-is reported in the UI instead of being emulated silently.
+Every adapter is created by `source-registry.ts`; the TUI renders whatever the
+registry returns. [`ADDING_A_SOURCE.md`](ADDING_A_SOURCE.md) is the recipe for a
+new platform. Adapters expose supported actions and connection fields. A missing
+capability is reported in the UI instead of being emulated silently.
 
 ## Tests and checks
 

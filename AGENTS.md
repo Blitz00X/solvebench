@@ -4,7 +4,7 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the current package
 layout and data flow. This file records the contracts that must not regress.
 
 ## Mission
-Build an exercise-first coding workbench for Exercism and LeetCode. The user chooses a task, edits its solution, runs tests, submits and asks an always-context-aware AI assistant. The current task and current solution are the product's single source of truth.
+Build an exercise-first coding workbench for Exercism, LeetCode and CSES. The user chooses a task, edits its solution, runs tests, submits on sources that support it and asks an always-context-aware AI assistant. The current task and current solution are the product's single source of truth.
 
 ## Product contract
 - No slash commands are required in the UI. Visible actions, mouse and keyboard must reach the same operations.

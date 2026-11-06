@@ -44,6 +44,7 @@
     "verify:release": "bun scripts/check-release-tree.ts",
     "check:launcher": "bash scripts/check-launcher.sh",
     "verify:catalog": "bun scripts/verify-catalog.ts",
+    "verify:cses": "bun scripts/verify-cses.ts",
     "verify:runner": "bun test packages/exercise/test/runners.test.ts",
     "verify:workbench": "bun scripts/verify-workbench.ts"
   },
