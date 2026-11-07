@@ -63,6 +63,8 @@ export function createExercismApi(options: ExercismApiOptions): ExercismApi {
   async function get<T>(path: string): Promise<T> {
     const response = await fetchImpl(`${base}${path}`, {
       headers: { authorization: `Bearer ${options.token}`, accept: "application/json" },
+      // A local statement must never wait forever on an unreachable API.
+      signal: AbortSignal.timeout(15_000),
     })
     if (!response.ok) throw new Error(`exercism api ${response.status} for ${path}`)
     return (await response.json()) as T

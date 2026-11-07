@@ -5,6 +5,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { ExercismSource } from "../src/exercism-source"
 import { resolveExercismConfig } from "../src/config"
+import type { ExercismApi } from "../src/exercism-api"
 import type { ExerciseSource } from "../src/source"
 
 let root: string
@@ -15,13 +16,13 @@ afterEach(async () => {
   await rm(root, { recursive: true, force: true })
 })
 
-function sourceWithWorkspace(runCli: (args: string[]) => Promise<{ code: number; stdout: string; stderr: string }>) {
+function sourceWithWorkspace(runCli: (args: string[]) => Promise<{ code: number; stdout: string; stderr: string }>, api?: ExercismApi) {
   const config = resolveExercismConfig({
     projectRoot: root,
     token: "test-token",
     fallbackToUserConfig: false,
   })
-  const source: ExerciseSource = new ExercismSource({ config, runCli })
+  const source: ExerciseSource = new ExercismSource({ config, runCli, ...(api ? { api } : {}) })
   return { source, config }
 }
 
@@ -108,10 +109,17 @@ describe("ExercismSource.getProblem with a downloaded exercise", () => {
       join(dir, ".exercism", "config.json"),
       JSON.stringify({ files: { solution: ["hello_world.py"], test: ["hello_world_test.py"] } }),
     )
-    const { source } = sourceWithWorkspace(async () => ({ code: 0, stdout: "", stderr: "" }))
+    const api: ExercismApi = {
+      listTracks: async () => [],
+      listExercises: async () => [{ slug: "hello-world", title: "Hello World", difficulty: "easy" }],
+      listCompletedSlugs: async () => new Set(),
+      completeSolution: async () => ({ unlocked: [] }),
+    }
+    const { source } = sourceWithWorkspace(async () => ({ code: 0, stdout: "", stderr: "" }), api)
     const result = await source.getProblem("python", "hello-world")
     expect(result.ok).toBe(true)
     if (!result.ok) return
+    expect(result.value.title).toBe("Hello World")
     expect(result.value.body).toContain("Say hello")
     expect(result.value.body).toContain("# Hello World") // raw markdown is kept for rendering
     expect(result.value.solutionFiles).toEqual(["hello_world.py"])
