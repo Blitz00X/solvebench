@@ -4,7 +4,7 @@ All notable changes to SolveBench are recorded here. The project follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for release tags.
 
-## [Unreleased]
+## [0.1.0-alpha.3] - 2026-11-13
 
 ### Added
 

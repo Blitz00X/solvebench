@@ -5,7 +5,7 @@ and an optional context-aware assistant in one window. You write the solution;
 the assistant replies with text. Import your own exercise folders or use the
 Exercism, LeetCode and CSES adapters.
 
-**Linux alpha · MIT licensed · v0.1.0-alpha.2.** The Local workflow is the
+**Linux alpha · MIT licensed · v0.1.0-alpha.3.** The Local workflow is the
 release's tested entry point. Live platform account workflows, macOS and Windows
 are not validated for this alpha.
 
@@ -42,9 +42,9 @@ the previous launcher. Repeat the same install command to update a checkout;
 
 The source and releases live at
 [Blitz00X/solvebench](https://github.com/Blitz00X/solvebench); the alpha tag is
-`v0.1.0-alpha.2`. From a checkout, the installer can fetch that tag instead of
+`v0.1.0-alpha.3`. From a checkout, the installer can fetch that tag instead of
 the local tree with
-`bash install.sh --repo Blitz00X/solvebench --version v0.1.0-alpha.2`.
+`bash install.sh --repo Blitz00X/solvebench --version v0.1.0-alpha.3`.
 
 1. `--sample` opens **Add Two Numbers** on the Local platform.
 2. Press **F5**. The starter intentionally fails.

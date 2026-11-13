@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # User-local Linux alpha installer. No sudo or global package changes.
 set -euo pipefail
-version=v0.1.0-alpha.2
+version=v0.1.0-alpha.3
 prefix=${SOLVEBENCH_PREFIX:-"$HOME/.local"}
 source_dir=
 repo=
