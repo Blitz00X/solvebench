@@ -9,14 +9,16 @@ Exercism, LeetCode and CSES adapters.
 release's tested entry point. Live platform account workflows, macOS and Windows
 are not validated for this alpha.
 
-![A local exercise, failed tests and an explicitly labelled offline hint](docs/media/demo/05-hint.png)
+![A local exercise, failed tests and an explicitly labelled offline hint](docs/media/demo/alpha4/05-hint.png)
 
-[Watch the 37-second demo](docs/media/demo/solvebench-offline-demo.mp4) ·
-[Animated preview](docs/media/demo/solvebench-offline-demo.gif)
+[Watch the 43.5-second demo](docs/media/demo/alpha4/solvebench-alpha4-offline-demo.mp4) ·
+[Animated preview](docs/media/demo/alpha4/solvebench-alpha4-offline-demo.gif)
 
 The demo uses actual UI captures and real local Python test runs with a scripted
 offline assistant. It is a paced sequence, not a continuous screen recording or
-an evaluation of a real model. [Capture details](docs/media/demo/README.md).
+an evaluation of a real model. [Capture details](docs/media/demo/alpha4/README.md).
+
+The previous 19 October demo is kept at `docs/media/demo/` for history.
 
 ## Install and try
 
