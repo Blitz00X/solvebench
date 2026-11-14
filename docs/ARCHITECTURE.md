@@ -49,8 +49,10 @@ bootstrap instead of a separate mock composition.
   are relative, symlinks and traversal are rejected, and duplicate identifiers
   never overwrite an existing solution.
 - Credential files are owner-only (`0600` on Unix) and live in gitignored
-  workspace paths. The assistant key is read from the environment variable named
-  by `apiKeyEnv` and is sent only in the HTTP `Authorization` header.
+  workspace paths. LeetCode session cookies are the exception: they stay in
+  process memory for the session, are never written to disk, and are sent only
+  to `leetcode.com`. The assistant key is read from the environment variable
+  named by `apiKeyEnv` and is sent only in the HTTP `Authorization` header.
 
 ## Workspace layout
 
@@ -79,8 +81,9 @@ of the new data model.
   runs with the user's permissions and is not sandboxed.
 - **Exercism** uses an isolated CLI configuration and the public API. Submission
   uploads the solution and then completes the exercise to unlock the next task.
-- **LeetCode** supports public catalog/statements and, with the user's session
-  cookies, Run and Submit through the platform judge.
+- **LeetCode** reads a bundled catalog snapshot, fetches only the opened
+  problem's statement, and, with the user's session cookies held in memory, runs
+  and submits through the platform judge.
 - **CSES** reads the public problem catalog and statement, imports the published
   samples and runs them with the selected language toolchain. It has no account
   integration, so it never submits or claims a platform verdict.

@@ -193,6 +193,7 @@ export function Workbench(props: WorkbenchProps) {
           setDialog(true)
         },
       }] : []),
+      ...(source.disconnect ? [{ label: "Disconnect", run: () => { void props.exercise.disconnect() } }] : []),
       ...(canImport() ? [{ id: "import-exercises", label: "Import · Ctrl+O", run: openImport }] : []),
       ...(props.exercise.deps.sampleDirectory ? [{ id: "try-sample", label: "Try sample", disabled: busy(), run: () => { void trySample() } }] : []),
     ]
@@ -474,8 +475,8 @@ export function Workbench(props: WorkbenchProps) {
     <Show when={dialog()}>
       <box border borderColor={C.accent} flexDirection="column" paddingX={1} height={8} flexShrink={0}>
         <text height={2}>Connection · {notice()} · Enter to save, Esc to close</text>
-        <text height={2} fg={C.dim}>Exercism: Settings → API/CLI token. LeetCode: session cookie and csrftoken (once).</text>
-        <text height={1} fg={C.dim}>Credentials are masked and stored locally.</text>
+        <text height={2} fg={C.dim}>Exercism: Settings → API/CLI token. LeetCode: session cookie and csrftoken (session only).</text>
+        <text height={1} fg={C.dim}>Credentials are masked, kept in memory for this session, and never written to disk.</text>
         <text height={1} id="connection-input" fg={C.accent}>{"●".repeat(Math.min(secret().length, 64)) || "Paste the key…"}</text>
       </box>
     </Show>

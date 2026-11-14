@@ -1,6 +1,6 @@
 # Alpha validation record
 
-Target: `v0.1.0-alpha.3`, Linux. This document separates executable checks from
+Target: `v0.1.0-alpha.4`, Linux. This document separates executable checks from
 work that needs a release host, platform accounts or another person. It is not
 evidence that a published download URL works from every network.
 
@@ -38,6 +38,7 @@ submit a solution.
 | Frozen dependency install, typecheck, documentation links, complete test suite | 2026-11-01: Bun 1.4.2; frozen install and typecheck passed; documentation link check passed; 225 tests passed, 0 failed, 715 assertions across 29 files |
 | `v0.1.0-alpha.2` release-tree audit and local checks | 2026-11-06: Bun 1.4.2; typecheck passed; 26 documentation links passed; release audit found no private paths, credential shapes, databases, symlinks or oversized files across 147 tracked files and HEAD history; version, installer pin and tag agree; 225 tests passed, 0 failed, 715 assertions across 29 files |
 | `v0.1.0-alpha.3` release-tree audit and local checks | 2026-11-13: Bun 1.4.2; typecheck passed; 28 documentation links passed; release audit found no private paths, credential shapes, databases, symlinks or oversized files across 155 tracked files and HEAD history; package version and installer pin agree; 241 tests passed, 0 failed, 770 assertions across 32 files |
+| `v0.1.0-alpha.4` release-tree audit and local checks | 2026-11-14: Bun 1.4.2; typecheck passed; 28 documentation links passed; release audit found no private paths, credential shapes, databases, symlinks or oversized files across 156 tracked files and HEAD history; package version and installer pin agree; 243 tests passed, 0 failed, 787 assertions across 32 files |
 | Installer failure/reinstall/update/data-preservation harness | 2026-11-01, 2026-11-06 and 2026-11-13: 12 offline cases passed, including rollback, concurrency, foreign launcher, symlink and saved-data cases; the harness now reads the pinned version from `install.sh` |
 | Clean source installation with a temporary HOME | 2026-11-01: `bash install.sh --source "$PWD"` installed under a temporary HOME/prefix; `solvebench --help` and `--version` worked without creating runtime state |
 | Clean installed `solvebench --sample` | 2026-11-01: temporary HOME/prefix, no provider or platform credentials; populated starter, failing F5, edit, cancel/save exit, restart and 3 passing examples verified |

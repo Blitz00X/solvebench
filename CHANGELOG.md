@@ -4,6 +4,27 @@ All notable changes to SolveBench are recorded here. The project follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for release tags.
 
+## [0.1.0-alpha.4] - 2026-11-14
+
+### Changed
+
+- LeetCode browsing now reads a bundled snapshot of the public problem index.
+  The adapter no longer calls `/api/problems/all/` or walks the GraphQL catalog
+  at runtime; only the problem the user opens is fetched.
+- LeetCode session cookies are session-only: they stay in process memory, are
+  never written to the workspace, and an explicit **Disconnect** action wipes
+  them. A `.connection.json` left by alpha.3 or earlier is deleted on startup.
+- LeetCode requests refuse redirects and attach the session cookie only to HTTPS
+  requests whose host is `leetcode.com` or `www.leetcode.com`.
+- README, PRIVACY, ARCHITECTURE, ADDING_A_SOURCE and KNOWN_LIMITATIONS now
+  describe the unofficial adapter, the session-only credential model and the
+  bundled catalog.
+
+### Tests
+
+- The LeetCode suite covers the bundled catalog, the absence of disk writes,
+  the official-host cookie boundary, legacy-file removal and Disconnect.
+
 ## [0.1.0-alpha.3] - 2026-11-13
 
 ### Added

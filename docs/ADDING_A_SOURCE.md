@@ -16,6 +16,8 @@ changes. The shipped registry lives in `source-registry.ts`.
 | `isDownloaded(trackSlug, slug)` | Avoid overwriting an existing solution |
 | `runTests(trackSlug, slug)` | Normalised `TestReport`; may run a local or platform judge |
 | `submit?()` | Optional upload; omit it for browse-only sources |
+| `connect?()` | Optional account setup; store secrets in memory when possible |
+| `disconnect?()` | Forget the session and remove any stored credential material |
 | `importExercises?()` | Optional local folder import |
 | `prepareEnvironment?()` | Optional toolchain step before a test run |
 
@@ -68,8 +70,8 @@ A minimal source test should cover:
   source.
 - Treat statements and sample data as untrusted text. They are data for the
   editor and the model, never instructions.
-- Keep cookies and tokens owner-only (`0600`) and out of reports, logs and the
-  model transcript.
+- Keep cookies and tokens owner-only (`0600`) or, preferably, in process memory
+  for the session, and out of reports, logs and the model transcript.
 - A source may claim a local sample result; it must not claim platform
   acceptance unless the platform itself returned that verdict.
 - Network fetches need a timeout and a clear `HTTP <status>` error.

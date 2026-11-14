@@ -28,6 +28,8 @@ export interface ExerciseSource {
   connectionFields?: readonly string[]
   supportedTracks?: readonly string[]
   connect?(credentials: Record<string, string>): Promise<void>
+  /** Forget a connection and remove any credential material this source stored. */
+  disconnect?(): Promise<void>
   /** Optional local package import; importing must not execute exercise code. */
   importExercises?(directory: string): Promise<Result<ImportedExercise[], ExerciseSourceError>>
   /**

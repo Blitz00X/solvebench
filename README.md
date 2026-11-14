@@ -5,7 +5,7 @@ and an optional context-aware assistant in one window. You write the solution;
 the assistant replies with text. Import your own exercise folders or use the
 Exercism, LeetCode and CSES adapters.
 
-**Linux alpha · MIT licensed · v0.1.0-alpha.3.** The Local workflow is the
+**Linux alpha · MIT licensed · v0.1.0-alpha.4.** The Local workflow is the
 release's tested entry point. Live platform account workflows, macOS and Windows
 are not validated for this alpha.
 
@@ -42,9 +42,9 @@ the previous launcher. Repeat the same install command to update a checkout;
 
 The source and releases live at
 [Blitz00X/solvebench](https://github.com/Blitz00X/solvebench); the alpha tag is
-`v0.1.0-alpha.3`. From a checkout, the installer can fetch that tag instead of
+`v0.1.0-alpha.4`. From a checkout, the installer can fetch that tag instead of
 the local tree with
-`bash install.sh --repo Blitz00X/solvebench --version v0.1.0-alpha.3`.
+`bash install.sh --repo Blitz00X/solvebench --version v0.1.0-alpha.4`.
 
 1. `--sample` opens **Add Two Numbers** on the Local platform.
 2. Press **F5**. The starter intentionally fails.
@@ -186,11 +186,18 @@ are labelled in the picker.
 
 ### LeetCode
 
-The adapter supports a public catalog and statements. Platform Run and Submit
-need your own `LEETCODE_SESSION` and `csrftoken` through **Connect**; credentials
-are masked and stored locally with mode 0600. Expiry/challenges are reported,
-not bypassed. Run uses `cases.txt`; Submit waits for the platform evaluation.
-Live account workflows have not been validated for this release.
+The adapter ships a bundled snapshot of the public problem index, so browsing
+makes no LeetCode catalog request. Opening a problem fetches only that problem's
+statement and starter code. Platform Run and Submit need your own
+`LEETCODE_SESSION` and `csrftoken` through **Connect**; the adapter keeps them in
+memory for the current session only and never writes them to disk. **Disconnect**
+clears them immediately. Cookies are attached only to HTTPS requests to
+`leetcode.com`, redirects are refused, and expiry/challenges are reported rather
+than bypassed. Run uses `cases.txt`; Submit waits for the platform evaluation.
+
+The LeetCode adapter is unofficial: it is not affiliated with LeetCode, runs with
+your own session, and you are responsible for following LeetCode's terms. Live
+account workflows have not been validated for this release.
 
 ### AI assistant
 

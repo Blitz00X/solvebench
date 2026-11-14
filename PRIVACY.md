@@ -43,11 +43,13 @@ save edits before exiting and follow any exit prompt shown by your version.
 
 The Exercism adapter reads `EXERCISM_API_TOKEN`, its isolated CLI configuration,
 or an existing user Exercism configuration. Its isolated configuration is under
-`.exercism-cli/` by default. LeetCode connection cookies are stored in
-`exercises/leetcode/.connection.json`. The adapters set credential files to mode
-0600 on Unix. These files are credentials, not encrypted vaults. Do not share
-your workspace or include it in a public repository or issue attachment.
-Environment overrides can change platform workspace/configuration locations.
+`.exercism-cli/` by default. LeetCode session cookies are kept in memory for the
+current session only; they are never written to the workspace or any config
+file, and **Disconnect** wipes them. The Exercism adapter sets its credential
+file to mode 0600 on Unix. That file is a credential, not an encrypted vault. Do
+not share your workspace or include it in a public repository or issue
+attachment. Environment overrides can change platform workspace/configuration
+locations.
 
 ## Tests and other network access
 

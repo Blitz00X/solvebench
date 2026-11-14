@@ -1,7 +1,8 @@
-import { mkdir, readFile, writeFile, chmod } from "node:fs/promises"
+import { writeFile, mkdir, rm } from "node:fs/promises"
 import { join } from "node:path"
 import { Err, Ok, type Result } from "@solvebench/shared"
 import { z } from "zod"
+import { LEETCODE_CATALOG } from "./leetcode-catalog"
 import type { ExerciseSource, ExerciseSourceError } from "./source"
 import type { ExerciseSummary, Problem, LocalExercise, TestReport, SubmitResult, Track } from "./types"
 import { readSolution } from "./workspace"
@@ -21,82 +22,98 @@ const Question = z.object({ questionId: z.string(), title: z.string(), difficult
   codeSnippets: z.array(z.object({ langSlug: z.string(), code: z.string() })).nullable() })
 type Question = z.infer<typeof Question>
 const QUESTION_QUERY = "query question($slug:String!){ question(titleSlug:$slug){questionId title difficulty content exampleTestcases codeSnippets{langSlug code}} }"
+/**
+ * The only hosts that may ever receive the session cookie. The adapter does not
+ * proxy, redirect or mirror a LeetCode session anywhere else.
+ */
+const CREDENTIAL_HOSTS = new Set(["leetcode.com", "www.leetcode.com"])
 
-/** Public catalog, platform-native execution and submission through an explicit session. */
+/**
+ * LeetCode adapter: a bundled public catalog, platform-native execution and
+ * submission through an explicit, session-only connection.
+ *
+ * No catalog endpoint is called at runtime. The problem index ships with the
+ * source; only the problem the user opens is fetched, one slug at a time.
+ */
 export class LeetCodeSource implements ExerciseSource {
   readonly id = "leetcode"
   readonly label = "LeetCode"
   readonly supportedTracks = LANGUAGES.map(l => l.slug)
   readonly connectionFields = ["LEETCODE_SESSION", "csrftoken"]
+  /** Credentials live in memory only; they are never written to the workspace. */
   private credentials: Record<string, string> = {}
   private questions = new Map<string, Question>()
-  private catalog: Omit<ExerciseSummary, "trackSlug">[] | null = null
+  private legacyRemoved = false
   constructor(readonly workspace: string, private fetchImpl: typeof fetch = fetch, private baseUrl = "https://leetcode.com", private pollDelay = 1000) {}
-  async isConfigured(): Promise<boolean> { return true } // Public catalog needs no account.
+
+  async isConfigured(): Promise<boolean> {
+    // Browsing the bundled catalog needs no account. Remove any credential file
+    // left by alpha.3 or earlier; credentials are session-only from now on.
+    if (!this.legacyRemoved) {
+      this.legacyRemoved = true
+      await rm(join(this.workspace, ".connection.json"), { force: true }).catch(() => undefined)
+    }
+    return true
+  }
+
   async prepareEnvironment(_track: string, _directory: string, report: (message: string) => void): Promise<void> {
     report("LeetCode platform judge ready")
   }
+
   async connect(credentials: Record<string, string>): Promise<void> {
     if (!credentials.LEETCODE_SESSION || !credentials.csrftoken) throw new Error("LeetCode session and csrf token required")
-    this.credentials = credentials
-    this.catalog = null
-    await mkdir(this.workspace, { recursive: true })
-    const path = join(this.workspace, ".connection.json")
-    await writeFile(path, JSON.stringify(credentials), { mode: 0o600 })
-    await chmod(path, 0o600)
+    this.credentials = { LEETCODE_SESSION: credentials.LEETCODE_SESSION, csrftoken: credentials.csrftoken }
+    this.questions.clear()
+    this.legacyRemoved = true
+    // Alpha.3 stored cookies on disk. Remove that file instead of migrating it.
+    await rm(join(this.workspace, ".connection.json"), { force: true }).catch(() => undefined)
   }
+
+  /** Explicit wipe path: forget the session and delete any legacy credential file. */
+  async disconnect(): Promise<void> {
+    this.credentials = {}
+    this.questions.clear()
+    this.legacyRemoved = true
+    await rm(join(this.workspace, ".connection.json"), { force: true }).catch(() => undefined)
+  }
+
   private async request(path: string, body?: unknown): Promise<unknown> {
-    if (!this.credentials.LEETCODE_SESSION) {
-      try { this.credentials = JSON.parse(await readFile(join(this.workspace, ".connection.json"), "utf8")) } catch { /* public browsing */ }
+    const url = new URL(path, this.baseUrl)
+    if (url.protocol !== "https:") throw new Error("LeetCode requests must use HTTPS")
+    const headers: Record<string, string> = { "content-type": "application/json", referer: `${this.baseUrl}/` }
+    // Hard boundary: the cookie is attached only to the official HTTPS host,
+    // never to a configured mirror, a test host or a redirect target.
+    if (this.credentials.LEETCODE_SESSION && CREDENTIAL_HOSTS.has(url.hostname)) {
+      headers.cookie = `LEETCODE_SESSION=${this.credentials.LEETCODE_SESSION}; csrftoken=${this.credentials.csrftoken}`
+      headers["x-csrftoken"] = this.credentials.csrftoken!
     }
-    const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
+    const response = await this.fetchImpl(url, {
       method: body === undefined ? "GET" : "POST",
-      headers: { "content-type": "application/json", referer: `${this.baseUrl}/`,
-        ...(this.credentials.LEETCODE_SESSION ? { cookie: `LEETCODE_SESSION=${this.credentials.LEETCODE_SESSION}; csrftoken=${this.credentials.csrftoken}`, "x-csrftoken": this.credentials.csrftoken! } : {}),
-      }, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(30000),
+      headers,
+      redirect: "error",
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      signal: AbortSignal.timeout(30000),
     })
     if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? "LeetCode connection expired — reconnect your account" : `LeetCode HTTP ${response.status}`)
     const data = await response.json() as { errors?: { message: string }[] }
     if (data.errors?.length) throw new Error(data.errors[0]!.message)
     return data
   }
+
   async listTracks(): Promise<Result<Track[], ExerciseSourceError>> {
     return Ok(LANGUAGES.map(l => ({ sourceId: this.id, slug: l.slug, title: l.title, language: l.slug })))
   }
+
   async listExercises(trackSlug: string): Promise<Result<ExerciseSummary[], ExerciseSourceError>> {
-    try {
-      if (this.catalog) return Ok(this.catalog.map(q => ({ ...q, trackSlug })))
-      // The public catalog delivers the full set in one request. Do not walk
-      // dozens of GraphQL pages on every language switch.
-      try {
-        const raw = await this.request("/api/problems/all/")
-        const page = z.object({ stat_status_pairs: z.array(z.object({
-          stat: z.object({ question__title: z.string(), question__title_slug: z.string() }),
-          difficulty: z.object({ level: z.number() }), paid_only: z.boolean(), status: z.string().nullable().optional(),
-        })) }).parse(raw)
-        this.catalog = page.stat_status_pairs.map(q => ({ sourceId: this.id, slug: q.stat.question__title_slug, title: q.stat.question__title,
-          difficulty: (["unknown", "easy", "medium", "hard"][q.difficulty.level] ?? "unknown") as ExerciseSummary["difficulty"],
-          progress: q.status === "ac" ? "completed" as const : q.paid_only ? "locked" as const : "available" as const, blurb: "" }))
-        return Ok(this.catalog.map(q => ({ ...q, trackSlug })))
-      } catch (error) {
-        // Authentication/challenge failures are not bypassed via a different route.
-        if (String(error).includes("reconnect")) throw error
-      }
-      const rows: ExerciseSummary[] = []
-      let total = Infinity
-      for (let skip = 0; skip < total; skip += 100) {
-        const raw = await this.request("/graphql/", { query: "query catalog($skip:Int!,$limit:Int!){problemsetQuestionList:questionList(categorySlug:\"\",skip:$skip,limit:$limit,filters:{}){total questions{title titleSlug difficulty isPaidOnly status}}}", variables: { skip, limit: 100 } })
-        const parsed = z.object({ data: z.object({ problemsetQuestionList: z.object({ total: z.number(), questions: z.array(z.object({ title: z.string(), titleSlug: z.string(), difficulty: z.string(), isPaidOnly: z.boolean(), status: z.string().nullable().optional() })) }) }) }).parse(raw)
-        const page = parsed.data.problemsetQuestionList
-        total = page.total
-        for (const q of page.questions) rows.push({ sourceId: this.id, trackSlug, slug: q.titleSlug, title: q.title,
-          difficulty: q.difficulty.toLowerCase() as ExerciseSummary["difficulty"], progress: q.status === "ac" ? "completed" : q.isPaidOnly ? "locked" : "available", blurb: "" })
-        if (!page.questions.length) break
-      }
-      this.catalog = rows.map(({ trackSlug: _track, ...q }) => q)
-      return Ok(rows)
-    } catch (error) { return Err({ kind: "network", detail: String(error) }) }
+    // The bundled snapshot is the catalog. No /api/problems/all/ and no paged
+    // GraphQL catalog walk: both were bulk reads of the Service.
+    return Ok(LEETCODE_CATALOG.map(q => ({
+      sourceId: this.id, trackSlug, slug: q.slug, title: q.title,
+      difficulty: q.difficulty as ExerciseSummary["difficulty"],
+      progress: q.paidOnly ? "locked" as const : "available" as const, blurb: "",
+    })))
   }
+
   private async question(slug: string): Promise<Question> {
     const cached = this.questions.get(slug)
     if (cached) return cached
@@ -105,11 +122,13 @@ export class LeetCodeSource implements ExerciseSource {
     this.questions.set(slug, q)
     return q
   }
+
   private file(track: string): string {
     const language = LANGUAGES.find(l => l.slug === track)
     if (!language) throw new Error(`Unsupported LeetCode language: ${track}`)
     return `solution.${language.extension}`
   }
+
   async getProblem(track: string, slug: string): Promise<Result<Problem, ExerciseSourceError>> {
     try {
       const q = await this.question(slug)
@@ -117,7 +136,9 @@ export class LeetCodeSource implements ExerciseSource {
         body: htmlToText(q.content ?? ""), solutionFiles: [this.file(track)], testFiles: ["cases.txt"], url: `${this.baseUrl}/problems/${slug}/` })
     } catch (error) { return Err({ kind: "failed", detail: String(error) }) }
   }
+
   async isDownloaded(track: string, slug: string): Promise<boolean> { return Bun.file(join(this.workspace, track, slug, this.file(track))).exists() }
+
   async download(track: string, slug: string): Promise<Result<LocalExercise, ExerciseSourceError>> {
     try {
       const q = await this.question(slug)
@@ -133,12 +154,10 @@ export class LeetCodeSource implements ExerciseSource {
       return Ok({ sourceId: this.id, trackSlug: track, slug, directory, files: [{ path: file, content: await readSolution(directory, file) }, { path: "cases.txt", content: await readSolution(directory, "cases.txt") }] })
     } catch (error) { return Err({ kind: "failed", detail: String(error) }) }
   }
+
   private async judge(track: string, slug: string, submit: boolean): Promise<Record<string, unknown>> {
+    if (!this.credentials.LEETCODE_SESSION) throw new Error("Connect LeetCode to run or submit against its judge")
     const q = await this.question(slug)
-    // Load stored credentials before checking connection state.
-    if (!this.credentials.LEETCODE_SESSION) {
-      try { this.credentials = JSON.parse(await readFile(join(this.workspace, ".connection.json"), "utf8")) } catch { throw new Error("Connect LeetCode to run or submit against its judge") }
-    }
     const directory = join(this.workspace, track, slug)
     const body = { lang: track, question_id: q.questionId, typed_code: await readSolution(directory, this.file(track)),
       ...(submit ? {} : { data_input: await readSolution(directory, "cases.txt") }) }
@@ -152,6 +171,7 @@ export class LeetCodeSource implements ExerciseSource {
     }
     throw new Error("LeetCode evaluation timed out; check your submission on the platform")
   }
+
   async runTests(track: string, slug: string): Promise<Result<TestReport, ExerciseSourceError>> {
     try {
       const started = Date.now(), result = await this.judge(track, slug, false)
@@ -163,6 +183,7 @@ export class LeetCodeSource implements ExerciseSource {
         raw: JSON.stringify(result, null, 2), command: "LeetCode Run (example/custom cases)", durationMs: Date.now() - started, exitCode: error || failed ? 1 : 0 })
     } catch (error) { return Err({ kind: "failed", detail: String(error) }) }
   }
+
   async submit(track: string, slug: string): Promise<Result<SubmitResult, ExerciseSourceError>> {
     try {
       const result = await this.judge(track, slug, true)

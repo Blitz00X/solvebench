@@ -4,9 +4,13 @@
   preinstalled environments; they receive an explicit setup message.
 - Exercism environment preparation supports nine tracks. The catalog includes
   additional tracks, labelled as not yet supported by the environment manager.
-- LeetCode Run/Submit requires the user's session and CSRF cookies. Public catalog
-  fetching was checked live; authenticated execution is tested with a protocol
-  fixture, because no LeetCode account credentials were provided for a live judge.
+- LeetCode Run/Submit requires the user's session and CSRF cookies. The adapter
+  ships a static catalog snapshot, so browsing does not call LeetCode's catalog
+  endpoint; opening a problem requests only that problem. Cookies are kept in
+  memory for the current session, never written to disk, and sent only to
+  `leetcode.com`; **Disconnect** wipes them. Authenticated execution is tested
+  with a protocol fixture, because no LeetCode account credentials were provided
+  for a live judge.
 - CSES support imports the public statement and sample cases and runs them with
   the local language toolchain. It has no CSES login, so it cannot submit, read
   platform completion or verify hidden tests.

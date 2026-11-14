@@ -120,6 +120,14 @@ export class ExerciseController {
       await this.init()
     } catch (error) { this.error(error) }
   }
+  async disconnect(): Promise<void> {
+    try {
+      if (!this.deps.source.disconnect) throw new Error("Disconnect not supported")
+      await this.deps.source.disconnect()
+      this.initialized = false
+      await this.init()
+    } catch (error) { this.error(error) }
+  }
   subscribe(listener: (state: ExerciseViewState) => void): () => void {
     this.listeners.add(listener)
     listener(this.state)
